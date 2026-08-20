@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>라이스점프3</title>
+    <title>Rice Jump! 3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -105,9 +105,9 @@
         <div id="start-screen" class="absolute inset-0 bg-black/85 hidden flex flex-col items-center justify-center text-center p-6 z-20">
             <h2 class="text-3xl md:text-5xl text-yellow-400 mb-6 retro-text animate-pulse" data-i18n="gameTitle">RICE JUMP! 3</h2>
             <p id="start-desc" class="text-xs md:text-[11px] text-gray-400 max-w-lg leading-relaxed mb-8" data-i18n="startDesc">
-                30단계의 하드코어 스테이지를 돌파하세요!<br><br>
+                30단계의 하드코어 횡스크롤 모험을 돌파하세요!<br><br>
                 미스터리 벽돌을 깨서 두바이 쫀득 쿠키(🍪 무적), 버터떡(🧈 목숨+1), 봄동 비빔밥(🥗 물총), 쌀알(🍚 몬스터 일소)을 획득하고,<br>
-                하늘에서 무작위로 떨어지는 폭탄(💣)을 피하며 매 5단계마다 보스를 물리치세요!
+                하늘에서 무작위로 떨어지는 폭탄(💣)을 피하며 골인 지점까지 전진하세요!
             </p>
             <div class="flex flex-col items-center gap-2">
                 <button id="start-btn" class="retro-btn px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-lg border-2 border-white text-sm md:text-base cursor-pointer pointer-events-auto" data-i18n="startAdventure">
@@ -137,13 +137,14 @@
         </div>
 
         <div id="ending-screen" class="absolute inset-0 bg-black hidden flex flex-col items-center justify-center text-center p-6 z-25">
-            <h2 class="text-3xl md:text-5xl text-yellow-400 mb-6 retro-text animate-bounce" data-i18n="congratulations">CONGRATULATIONS!</h2>
+            <h2 class="text-3xl md:text-4xl text-yellow-400 mb-4 retro-text animate-bounce" data-i18n="congratulations">CONGRATULATIONS!</h2>
+            <p id="ending-msg" class="text-base md:text-xl text-emerald-400 mb-6 retro-text" data-i18n="endingCongrats">수고하셨습니다! 모든 모험이 끝났습니다!</p>
             <p id="ending-desc" class="text-xs md:text-sm text-gray-300 mb-8 max-w-md leading-relaxed" data-i18n="endingDesc">
                 당신은 30개의 모든 극한 스테이지를 돌파하고 쌀 세계를 구원했습니다!<br>
                 최고의 쌀 모험가로 인정합니다!
             </p>
             <button id="end-restart-btn" class="retro-btn px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-lg border-2 border-white text-sm md:text-base cursor-pointer pointer-events-auto" data-i18n="playAgain">
-                처음부터 다시하기
+                다시 해보기
             </button>
         </div>
 
@@ -195,7 +196,7 @@
                 gameTitle: "RICE JUMP! 3",
                 unlockDesc: "30개의 더욱 강력해진 스테이지가 당신을 기다립니다!<br>시작하려면 아래 버튼을 탭하세요.",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "30단계의 하드코어 스테이지를 돌파하세요!<br><br>미스터리 벽돌을 깨서 두바이 쫀득 쿠키(🍪 무적), 버터떡(🧈 목숨+1), 봄동 비빔밥(🥗 물총), 쌀알(🍚 몬스터 일소)을 획득하고,<br>하늘에서 무작위로 떨어지는 폭탄(💣)을 피하며 매 5단계마다 보스를 물리치세요!",
+                startDesc: "30단계의 하드코어 횡스크롤 모험을 돌파하세요!<br><br>미스터리 벽돌을 깨서 두바이 쫀득 쿠키(🍪 무적), 버터떡(🧈 목숨+1), 봄동 비빔밥(🥗 물총), 쌀알(🍚 몬스터 일소)을 획득하고,<br>하늘에서 무작위로 떨어지는 폭탄(💣)을 피하며 골인 지점까지 전진하세요!",
                 startAdventure: "모험 시작하기",
                 gameOver: "GAME OVER",
                 gameOverDesc: "폭탄에 피격되었습니다!<br>현재 스테이지의 처음부터 다시 도전합니다.",
@@ -204,8 +205,9 @@
                 clearDesc: "보상으로 생명력이 회복되었습니다!",
                 nextStage: "다음 단계로 진입",
                 congratulations: "CONGRATULATIONS!",
+                endingCongrats: "수고하셨습니다! 모든 모험이 끝났습니다!",
                 endingDesc: "당신은 30개의 모든 극한 스테이지를 돌파하고 쌀 세계를 구원했습니다!<br>최고의 쌀 모험가로 인정합니다!",
-                playAgain: "처음부터 다시하기",
+                playAgain: "다시 해보기",
                 waterGunActive: "★ 물총 모드 활성화 ★",
                 controlsHint: "[이동]: A, D / ◀ ▶ | [점프]: Space / ▲ | [물총 발사]: Shift",
                 shootBtn: "발사 💦",
@@ -217,7 +219,7 @@
                 gameTitle: "RICE JUMP! 3",
                 unlockDesc: "30 powerful new stages await you!<br>Tap the button below to start.",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Conquer 30 hardcore stages!<br><br>Break mystery blocks to get Dubai Sweet Cookies (🍪 Invincible), Butter Rice Cakes (🧈 Life+1), Bomdong Bibimbap (🥗 Water Gun), Rice Grains (🍚 Clear),<br>dodge falling Bomb items (💣), and defeat giant bosses every 5 stages!",
+                startDesc: "Conquer 30 hardcore side-scrolling stages!<br><br>Break mystery blocks for Dubai Cookies (🍪), Butter Rice Cakes (🧈 Life+1), Bomdong Bibimbap (🥗), Rice Grains (🍚),<br>dodge falling bombs (💣), and reach the goal flag!",
                 startAdventure: "START ADVENTURE",
                 gameOver: "GAME OVER",
                 gameOverDesc: "Hit by a bomb!<br>Restarting from the beginning of the current stage.",
@@ -226,6 +228,7 @@
                 clearDesc: "Life recovered as a reward!",
                 nextStage: "NEXT STAGE",
                 congratulations: "CONGRATULATIONS!",
+                endingCongrats: "Great job! All adventures are complete!",
                 endingDesc: "You conquered all 30 extreme stages and saved the rice world!<br>You are a legendary rice adventurer!",
                 playAgain: "PLAY AGAIN",
                 waterGunActive: "★ WATER GUN MODE ACTIVE ★",
@@ -239,7 +242,7 @@
                 gameTitle: "RICE JUMP! 3",
                 unlockDesc: "30のさらに強力なステージがあなたを待っています！<br>開始するには下のボタンをタップしてください。",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "30のハードコアステージを突破せよ！<br><br>ミステリーブロックを壊してドバイもちクッキー(🍪 無敵)、バター餅(🧈 ライフ+1)、春菜ビビンバ(🥗 水鉄砲)、米粒(🍚 敵一掃)を獲得し、<br>ランダムに落ちてくる爆弾(💣)を避けてボスを倒せ！",
+                startDesc: "30のハードコア横スクロールステージを突破せよ！<br><br>ミステリーブロックを壊してアイテムを獲得し、爆弾を避けてゴールを目指せ！",
                 startAdventure: "冒険を始める",
                 gameOver: "GAME OVER",
                 gameOverDesc: "爆弾に被弾しました！<br>現在のステージの最初から再挑戦します。",
@@ -248,8 +251,9 @@
                 clearDesc: "報酬としてライフが回復しました！",
                 nextStage: "次のステージへ",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "30の極限ステージをすべて突破し、米の世界を救いました！<br>最高の米冒険者として認めます！",
-                playAgain: "最初からやり直す",
+                endingCongrats: "お疲れ様でした！すべての冒険が終わりました！",
+                endingDesc: "30の極限ステージをすべて突破し、米の世界を救いました！",
+                playAgain: "もう一度プレイ",
                 waterGunActive: "★ ウォーターガンモード発動 ★",
                 controlsHint: "[移動]: A, D / ◀ ▶ | [ジャンプ]: Space / ▲ | [発射]: Shift",
                 shootBtn: "発射 💦",
@@ -261,7 +265,7 @@
                 gameTitle: "RICE JUMP! 3",
                 unlockDesc: "30个更强大的关卡等待着你！<br>点击下方按钮开始。",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "突破30个硬核关卡！<br><br>击碎神秘砖块获取迪拜软曲奇(🍪 无敌)、黄油年糕(🧈 生命+1)、春菜拌饭(🥗 水枪)、米粒(🍚 清理怪物)，<br>小心随时坠落的炸弹(💣)并击败BOSS！",
+                startDesc: "突破30个硬核横版过关关卡！获取各种强力道具，躲避炸弹并抵达终点！",
                 startAdventure: "开始冒险",
                 gameOver: "GAME OVER",
                 gameOverDesc: "被炸弹击中！<br>从当前关卡重新开始。",
@@ -270,8 +274,9 @@
                 clearDesc: "奖励：生命值已恢复！",
                 nextStage: "进入下一关",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "你成功通关了所有30个极限关卡并拯救了米饭世界！<br>你就是传奇米饭冒险家！",
-                playAgain: "重新开始",
+                endingCongrats: "辛苦了！所有冒险已圆满结束！",
+                endingDesc: "你成功通关了所有30个极限关卡并拯救了米饭世界！",
+                playAgain: "再玩一次",
                 waterGunActive: "★ 水枪模式激活 ★",
                 controlsHint: "[移动]: A, D / ◀ ▶ | [跳跃]: Space / ▲ | [射击]: Shift",
                 shootBtn: "发射 💦",
@@ -281,157 +286,164 @@
             },
             es: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "¡30 nuevos y poderosos niveles te esperan!<br>Toca el botón de abajo para empezar.",
+                unlockDesc: "¡30 nuevos niveles de desplazamiento lateral te esperan!",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "¡Supera 30 niveles hardcore!<br><br>Rompe bloques misteriosos para conseguir Galletas Dubai (🍪), Pastel de mantequilla (🧈), Bibimbap (🥗), Arroz (🍚),<br>¡evita las bombas (💣) que caen y derrota al jefe!",
+                startDesc: "¡Supera 30 niveles hardcore en desplazamiento lateral y llega a la meta!",
                 startAdventure: "COMENZAR AVENTURA",
                 gameOver: "GAME OVER",
-                gameOverDesc: "¡Golpeado por una bomba!<br>Reiniciando desde el principio del nivel actual.",
+                gameOverDesc: "¡Golpeado por una bomba!",
                 tryAgain: "REINTENTAR",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "¡Vida recuperada como recompensa!",
+                clearDesc: "¡Vida recuperada!",
                 nextStage: "SIGUIENTE NIVEL",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "¡Has conquistado los 30 niveles extremos y salvado el mundo del arroz!<br>¡Eres un aventurero legendario!",
+                endingCongrats: "¡Buen trabajo!",
+                endingDesc: "¡Has conquistado los 30 niveles!",
                 playAgain: "JUGAR DE NUEVO",
                 waterGunActive: "★ MODO PISTOLA DE AGUA ACTIVO ★",
-                controlsHint: "[Mover]: A, D / ◀ ▶ | [Saltar]: Space / ▲ | [Disparar]: Shift",
+                controlsHint: "[Mover]: A, D | [Saltar]: Space | [Disparar]: Shift",
                 shootBtn: "DISPARAR 💦",
                 jumpBtn: "SALTAR 🚀",
                 scoreText: "PUNTOS:",
-                bossTitle: "JEFE : SEÑOR DEMONIO DE ARROZ"
+                bossTitle: "JEFE"
             },
             pt: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30 novos e poderosos estágios esperam por você!<br>Toque no botão abaixo para começar.",
+                unlockDesc: "30 novos estágios de rolagem lateral!",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Conquiste 30 estágios hardcore!<br><br>Quebre blocos misteriosos, desvie de bombas caindo (💣) e derrote chefes a cada 5 estágios!",
-                startAdventure: "INICIAR AVENTURA",
+                startDesc: "Conquiste 30 estágios hardcore de plataforma!",
+                startAdventure: "INICIAR",
                 gameOver: "GAME OVER",
-                gameOverDesc: "Atingido por uma bomba!<br>Reiniciando do início do estágio atual.",
+                gameOverDesc: "Atingido por bomba!",
                 tryAgain: "TENTAR NOVAMENTE",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "Vida recuperada como recompensa!",
-                nextStage: "PRÓXIMO ESTÁGIO",
+                clearDesc: "Vida recuperada!",
+                nextStage: "PRÓXIMO",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "Você conquistou todos os 30 estágios extremos e salvou o mundo do arroz!",
+                endingCongrats: "Bom trabalho!",
+                endingDesc: "Você salvou o mundo do arroz!",
                 playAgain: "JOGAR NOVAMENTE",
-                waterGunActive: "★ MODO ARMA DE ÁGUA ATIVO ★",
-                controlsHint: "[Mover]: A, D / ◀ ▶ | [Pular]: Space / ▲ | [Atirar]: Shift",
+                waterGunActive: "★ MODO ATIVO ★",
+                controlsHint: "[Mover]: A, D | [Pular]: Space",
                 shootBtn: "ATIRAR 💦",
                 jumpBtn: "PULAR 🚀",
                 scoreText: "PONTOS:",
-                bossTitle: "CHEFE : DEMÔNIO DO ARROZ"
+                bossTitle: "CHEFE"
             },
             fr: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30 nouveaux niveaux puissants vous attendent !<br>Appuyez sur le bouton ci-dessous pour commencer.",
+                unlockDesc: "30 nouveaux niveaux !",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Conquérez 30 niveaux hardcore !<br><br>Évitez les bombes qui tombent (💣) et battez le boss géant tous les 5 niveaux !",
-                startAdventure: "COMMENCER L'AVENTURE",
+                startDesc: "Conquérez 30 niveaux de plateforme défilants !",
+                startAdventure: "COMMENCER",
                 gameOver: "GAME OVER",
-                gameOverDesc: "Touché par une bombe !<br>Recommencement au début du niveau actuel.",
+                gameOverDesc: "Touché par une bombe !",
                 tryAgain: "RÉESSAYER",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "Vie récupérée en récompense !",
-                nextStage: "NIVEAU SUIVANT",
+                clearDesc: "Vie récupérée !",
+                nextStage: "SUIVANT",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "Vous avez conquis les 30 niveaux extrêmes et sauvé le monde du riz !",
+                endingCongrats: "Bravo !",
+                endingDesc: "Vous avez sauvé le monde !",
                 playAgain: "REJOUER",
-                waterGunActive: "★ MODE PISTOLET À EAU ACTIF ★",
-                controlsHint: "[Déplacer]: A, D / ◀ ▶ | [Sauter]: Space / ▲ | [Tirer]: Shift",
+                waterGunActive: "★ MODE ACTIF ★",
+                controlsHint: "[Déplacer]: A, D | [Sauter]: Space",
                 shootBtn: "TIRER 💦",
                 jumpBtn: "SAUTER 🚀",
                 scoreText: "SCORE:",
-                bossTitle: "BOSS : SEIGNEUR DÉMON DU RIZ"
+                bossTitle: "BOSS"
             },
             de: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30 mächtige neue Level erwarten dich!<br>Tippe unten auf die Schaltfläche, um zu starten.",
+                unlockDesc: "30 neue Level warten!",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Erobere 30 Hardcore-Level!<br><br>Vermeide herabfallende Bomben (💣) und besiege alle 5 Level den Boss-Roboter!",
-                startAdventure: "ABENTEUER STARTEN",
+                startDesc: "Erobere 30 Hardcore-Platformer-Level!",
+                startAdventure: "STARTEN",
                 gameOver: "GAME OVER",
-                gameOverDesc: "Von einer Bombe getroffen!<br>Neustart am Anfang des aktuellen Levels.",
-                tryAgain: "NOCHMALS VERSUCHEN",
+                gameOverDesc: "Von Bombe getroffen!",
+                tryAgain: "NOCHMALS",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "Leben als Belohnung wiederhergestellt!",
-                nextStage: "NÄCHSTER LEVEL",
+                clearDesc: "Leben wiederhergestellt!",
+                nextStage: "NÄCHSTER",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "Du hast alle 30 extremen Level geschafft und die Reiskost erlöst!",
-                playAgain: "ERNEUT SPIELEN",
-                waterGunActive: "★ WASSERPISTOLEN-MODUS AKTIV ★",
-                controlsHint: "[Bewegen]: A, D / ◀ ▶ | [Springen]: Space / ▲ | [Schießen]: Shift",
+                endingCongrats: "Gute Arbeit!",
+                endingDesc: "Du hast die Reiskost erlöst!",
+                playAgain: "ERNEUT",
+                waterGunActive: "★ MODUS AKTIV ★",
+                controlsHint: "[Bewegen]: A, D | [Springen]: Space",
                 shootBtn: "SCHIESSEN 💦",
                 jumpBtn: "SPRINGEN 🚀",
                 scoreText: "PUNKTE:",
-                bossTitle: "BOSS : REISDÄMON-OBERSTE"
+                bossTitle: "BOSS"
             },
             it: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30 potenti nuovi livelli ti aspettano!<br>Tocca il pulsante qui sotto per iniziare.",
+                unlockDesc: "30 nuovi livelli!",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Conquista 30 livelli hardcore!<br><br>Schiva le bombe che cadono (💣) e sconfiggi il boss ogni 5 livelli!",
-                startAdventure: "INIZIA AVVENTURA",
+                startDesc: "Conquista 30 livelli a scorrimento!",
+                startAdventure: "INIZIA",
                 gameOver: "GAME OVER",
-                gameOverDesc: "Colpito da una bomba!<br>Riavvio dall'inizio del livello attuale.",
+                gameOverDesc: "Colpito da una bomba!",
                 tryAgain: "RIPROVA",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "Vita recuperata come ricompensa!",
-                nextStage: "PROSSIMO LIVELLO",
+                clearDesc: "Vita recuperata!",
+                nextStage: "PROSSIMO",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "Hai completato tutti i 30 livelli estremi e salvato il mondo del riso!",
+                endingCongrats: "Ottimo lavoro!",
+                endingDesc: "Hai salvato il mondo!",
                 playAgain: "GIOCA ANCORA",
-                waterGunActive: "★ MODALITÀ PISTOLA ad ACQUA ATTIVA ★",
-                controlsHint: "[Muovi]: A, D / ◀ ▶ | [Salta]: Space / ▲ | [Spara]: Shift",
+                waterGunActive: "★ MODALITÀ ATTIVA ★",
+                controlsHint: "[Muovi]: A, D | [Salta]: Space",
                 shootBtn: "SPARA 💦",
                 jumpBtn: "SALTA 🚀",
                 scoreText: "PUNTI:",
-                bossTitle: "BOSS : DEMONE DEL RISO"
+                bossTitle: "BOSS"
             },
             nl: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30 krachtige nieuwe levels wachten op je!<br>Tik hieronder om te starten.",
+                unlockDesc: "30 nieuwe levels!",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Verover 30 hardcore levels!<br><br>Ontwijk vallende bommen (💣) en versla de baas elke 5 levels!",
-                startAdventure: "AVONTUUR STARTEN",
+                startDesc: "Verover 30 hardcore platformlevels!",
+                startAdventure: "START",
                 gameOver: "GAME OVER",
-                gameOverDesc: "Geraakt door een bom!<br>Opnieuw beginnen vanaf het begin van dit level.",
-                tryAgain: "OPNIEUW PROBEREN",
+                gameOverDesc: "Gerukt door bom!",
+                tryAgain: "OPNIEUW",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "Leven hersteld als beloning!",
-                nextStage: "VOLGEND LEVEL",
+                clearDesc: "Leven hersteld!",
+                nextStage: "VOLGENDE",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "Je hebt alle 30 extreme levels overwonnen en de rijstwereld gered!",
-                playAgain: "OPNIEUW SPELEN",
-                waterGunActive: "★ WATERPISTOOL MODUS ACTIEF ★",
-                controlsHint: "[Bewegen]: A, D / ◀ ▶ | [Springen]: Space / ▲ | [Schieten]: Shift",
+                endingCongrats: "Goed gedaan!",
+                endingDesc: "Je hebt de rijstwereld gered!",
+                playAgain: "OPNIEUW",
+                waterGunActive: "★ MODUS ACTIEF ★",
+                controlsHint: "[Bewegen]: A, D | [Springen]: Space",
                 shootBtn: "SCHIET 💦",
                 jumpBtn: "SPRONG 🚀",
                 scoreText: "SCORE:",
-                bossTitle: "BAAS : RIJST DEMON OVERLORD"
+                bossTitle: "BAAS"
             },
             ru: {
                 gameTitle: "RICE JUMP! 3",
-                unlockDesc: "Вас ждут 30 мощных новых уровней!<br>Нажмите кнопку ниже, чтобы начать.",
+                unlockDesc: "30 новых уровней!",
                 tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Пройдите 30 хардкорных уровней!<br><br>Уворачивайтесь от падающих бомб (💣) и побеждайте боссов каждые 5 уровней!",
-                startAdventure: "НАЧАТЬ ПРИКЛЮЧЕНИЕ",
+                startDesc: "Пройдите 30 хардкорных уровней сайд-скроллера!",
+                startAdventure: "НАЧАТЬ",
                 gameOver: "GAME OVER",
-                gameOverDesc: "Попадание бомбы!<br>Начало уровня заново.",
+                gameOverDesc: "Попадание бомбы!",
                 tryAgain: "ПОВТОРИТЬ",
                 stageClear: "STAGE CLEAR!!",
-                clearDesc: "Жизнь восстановлена в награду!",
-                nextStage: "СЛЕДУЮЩИЙ УРОВЕНЬ",
+                clearDesc: "Жизнь восстановлена!",
+                nextStage: "ДАЛЕЕ",
                 congratulations: "CONGRATULATIONS!",
-                endingDesc: "Вы прошли все 30 экстремальных уровней и спасли мир риса!",
+                endingCongrats: "Отличная работа!",
+                endingDesc: "Вы спасли мир риса!",
                 playAgain: "ИГРАТЬ СНОВА",
-                waterGunActive: "★ ВОДЯНОЙ ПИСТОЛЕТ АКТИВЕН ★",
-                controlsHint: "[Движение]: A, D / ◀ ▶ | [Прыжок]: Space / ▲ | [Стрельба]: Shift",
+                waterGunActive: "★ АКТИВЕН ★",
+                controlsHint: "[Движение]: A, D | [Прыжок]: Space",
                 shootBtn: "СТРЕЛЯТЬ 💦",
                 jumpBtn: "ПРЫЖОК 🚀",
                 scoreText: "СЧЕТ:",
-                bossTitle: "БОСС : РИСОВЫЙ ДЕМОН"
+                bossTitle: "БОСС"
             }
         };
 
@@ -448,32 +460,45 @@
             }
         }
 
+        const themes = [
+            { name: "★ EMERALD FOREST", bg: "#064e3b", platform: "#047857", accent: "#34d399" },
+            { name: "★ NEON CYBER", bg: "#311042", platform: "#7c3aed", accent: "#c084fc" },
+            { name: "★ GOLDEN DESERT", bg: "#451a03", platform: "#b45309", accent: "#fbbf24" },
+            { name: "★ FROZEN TUNDRA", bg: "#0f172a", platform: "#1e3a8a", accent: "#60a5fa" },
+            { name: "★ VOLCANIC CORE", bg: "#450a0a", platform: "#991b1b", accent: "#f87171" }
+        ];
+
         const titleAudio = new Audio('라이스점프 3 타이틀곡rice jump! 3 title theem(기획중).mp3');
         titleAudio.loop = true;
 
-        const stageBgmAudio = new Audio('라이스점프 3 타이틀곡rice jump! 3 title theem(기획중).mp3');
-        stageBgmAudio.loop = true;
-
         const langChangeAudio = new Audio('lenguege_change.wav');
-        const bombHitAudio = new Audio('rice bomb!.wav');
-        const emergencyAudio = new Audio('목숨 비상!.wav');
-        emergencyAudio.loop = true;
+        const bombAudio = new Audio('rice bomb!.wav');
+        const panicAudio = new Audio('목숨 비상!.wav');
+        panicAudio.loop = true;
+        const stageClearAudio = new Audio('stage_clear.mp3');
+        const endingAudio = new Audio('ending.mp3');
+        endingAudio.loop = true;
 
         const drumFiles = [
-            'rice jump drum.wav',
-            'rice jump drum2.wav',
-            'rice jump drum3.wav',
-            'rice jump drum4.wav',
-            'rice jump drum5.wav'
+            new Audio('rice jump drum.wav'),
+            new Audio('rice jump drum2.wav'),
+            new Audio('rice jump drum3.wav'),
+            new Audio('rice jump drum4.wav'),
+            new Audio('rice jump drum5.wav')
         ];
-        let drumIndex = 0;
-        let drumAudio = new Audio(drumFiles[0]);
 
-        function playNextDrumBeat() {
-            if (!gameState.isActive) return;
-            drumAudio.src = drumFiles[drumIndex];
-            drumAudio.play().catch(e => {});
-            drumIndex = (drumIndex + 1) % drumFiles.length;
+        let drumInterval = null;
+        let drumIndex = 0;
+        function startDrumSequence() {
+            if (drumInterval) clearInterval(drumInterval);
+            drumInterval = setInterval(() => {
+                if (!gameState.isActive) return;
+                try {
+                    drumFiles[drumIndex].currentTime = 0;
+                    drumFiles[drumIndex].play().catch(() => {});
+                    drumIndex = (drumIndex + 1) % drumFiles.length;
+                } catch(e) {}
+            }, 500);
         }
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -488,45 +513,45 @@
             if (type === 'jump') {
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(450, now + 0.15);
                 gain.gain.setValueAtTime(0.15, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
                 osc.start(now);
                 osc.stop(now + 0.15);
             } else if (type === 'item_get') {
-                osc.type = 'triangle';
+                osc.type = 'sine';
                 osc.frequency.setValueAtTime(300, now);
                 osc.frequency.setValueAtTime(600, now + 0.08);
                 osc.frequency.setValueAtTime(900, now + 0.16);
                 gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
                 osc.start(now);
                 osc.stop(now + 0.25);
             } else if (type === 'shoot') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(100, now + 0.2);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'hurt') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now);
                 osc.stop(now + 0.2);
             }
         }
 
-        const themes = [
-            { bg: '#08090d', platform: '#10b981', accent: '#059669', name: '★ EMERALD FOREST' },
-            { bg: '#18022b', platform: '#ec4899', accent: '#db2777', name: '★ NEON CITY' },
-            { bg: '#2b0802', platform: '#f97316', accent: '#ea580c', name: '★ VOLCANIC CALDERA' },
-            { bg: '#02242b', platform: '#06b6d4', accent: '#0891b2', name: '★ FROZEN TUNDRA' },
-            { bg: '#231f20', platform: '#eab308', accent: '#ca8a04', name: '★ GOLDEN CITADEL' }
-        ];
-
         const gameState = {
-            isActive: false,
             stage: 1,
             score: 0,
             lives: 3,
-            timeLeft: 100
+            isActive: false,
+            timeLeft: 120
         };
 
         const player = {
@@ -536,24 +561,36 @@
             h: 48,
             vx: 0,
             vy: 0,
-            speed: 6,
-            jumpPower: -13,
-            gravity: 0.55,
+            speed: 5.5,
+            jumpPower: -13.5,
+            gravity: 0.6,
             grounded: false,
             isGolden: false,
             goldenTimer: 0,
             isWaterGun: false,
             waterGunTimer: 0,
-            deductLife(amount, bypassGolden = false) {
-                if (this.isGolden && !bypassGolden) return;
-                this.lives -= amount;
-                document.getElementById('lives-display').innerText = this.lives;
-                if (this.lives <= 0) {
+            deductLife: function(amount = 1, forceReset = false) {
+                if (this.isGolden && !forceReset) return;
+                playSynthSound('hurt');
+                
+                let currentLives = Number(gameState.lives);
+                if (isNaN(currentLives) || currentLives <= 0) {
+                    currentLives = 3;
+                }
+                
+                gameState.lives = Math.max(0, currentLives - amount);
+                document.getElementById('lives-display').innerText = gameState.lives;
+
+                if (gameState.lives <= 0) {
                     triggerGameOver();
+                } else {
+                    spawnParticles(this.x + this.w/2, this.y + this.h/2, '#ef4444', 25);
                 }
             }
         };
 
+        let worldWidth = 3500;
+        let cameraX = 0;
         let platforms = [];
         let mysteryBlocks = [];
         let monsters = [];
@@ -562,6 +599,7 @@
         let boss = null;
         let particles = [];
         let bombs = [];
+        let goalSwitch = { x: 3300, y: 610, w: 50, h: 30, pressed: false };
 
         function buildLevel() {
             platforms = [];
@@ -572,65 +610,212 @@
             bombs = [];
             boss = null;
 
+            worldWidth = 3000 + gameState.stage * 150;
+            goalSwitch.x = worldWidth - 250;
+            goalSwitch.y = 610;
+            goalSwitch.pressed = false;
+
             const themeIndex = (Math.floor((gameState.stage - 1) / 6)) % themes.length;
+            const currentTheme = themes[themeIndex];
             document.getElementById('stage-badge').innerText = `STAGE ${gameState.stage} / 30`;
-            document.getElementById('stage-theme-badge').innerText = themes[themeIndex].name;
+            document.getElementById('stage-theme-badge').innerText = currentTheme.name;
 
-            platforms.push({ x: 0, y: 680, w: 1280, h: 40 });
+            platforms.push({ x: 0, y: 650, w: worldWidth, h: 70 });
 
-            const platCount = Math.min(6 + Math.floor(gameState.stage / 2), 12);
-            for (let i = 0; i < platCount; i++) {
-                platforms.push({
-                    x: 150 + (i * 180) % 1100,
-                    y: 580 - (i * 45) - (i % 2 * 30),
-                    w: Math.max(100, 200 - gameState.stage * 3),
-                    h: 24
-                });
+            for (let i = 1; i < worldWidth / 300; i++) {
+                let pw = 180 + Math.random() * 120;
+                let ph = 25;
+                let px = i * 320 + Math.random() * 80;
+                let py = 350 + (Math.sin(i) * 120);
+                platforms.push({ x: px, y: py, w: pw, h: ph });
+
+                if (Math.random() > 0.3) {
+                    mysteryBlocks.push({ x: px + pw/2 - 20, y: py - 90, w: 40, h: 40, hit: false });
+                }
             }
 
-            const blockCount = Math.min(3 + Math.floor(gameState.stage / 3), 7);
-            for (let i = 0; i < blockCount; i++) {
-                const types = ['cookie', 'butter', 'bibimbap', 'rice'];
-                const itemType = types[Math.floor(Math.random() * types.length)];
-                mysteryBlocks.push({
-                    x: 200 + i * 160,
-                    y: 320 + (i % 2 === 0 ? -40 : 40),
-                    w: 40,
-                    h: 40,
-                    hit: false,
-                    itemType: itemType
-                });
-            }
-
-            const monsterCount = Math.min(2 + Math.floor(gameState.stage / 2), 10);
-            for (let i = 0; i < monsterCount; i++) {
+            for (let i = 0; i < 4 + Math.floor(gameState.stage / 2); i++) {
+                let mx = 600 + i * 550 + Math.random() * 200;
                 monsters.push({
-                    x: 300 + i * 120,
-                    y: 400 - (i * 35),
-                    w: 40,
-                    h: 40,
-                    vx: (i % 2 === 0 ? 1 : -1) * (1.5 + gameState.stage * 0.1),
-                    minX: 150,
-                    maxX: 1150
+                    x: mx,
+                    y: 590,
+                    w: 44,
+                    h: 44,
+                    vx: 2 + gameState.stage * 0.1,
+                    minX: mx - 200,
+                    maxX: mx + 200,
+                    alive: true
                 });
             }
 
             if (gameState.stage % 5 === 0) {
                 boss = {
-                    x: 900,
-                    y: 350,
+                    x: worldWidth - 600,
+                    y: 400,
                     w: 120,
                     h: 120,
                     hp: 10,
                     maxHp: 10,
-                    vx: 2 + (gameState.stage * 0.2),
-                    vy: 0,
+                    vx: 2,
                     timer: 0
                 };
                 document.getElementById('boss-hp-container').classList.remove('hidden');
             } else {
                 document.getElementById('boss-hp-container').classList.add('hidden');
             }
+
+            gameState.timeLeft = 120;
+            player.x = 100;
+            player.y = 400;
+            player.vx = 0;
+            player.vy = 0;
+        }
+
+        const keys = { left: false, right: false, up: false, shoot: false };
+
+        window.addEventListener('keydown', e => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+            if (e.code === 'ArrowUp' || e.code === 'Space') {
+                if (player.grounded) {
+                    player.vy = player.jumpPower;
+                    player.grounded = false;
+                    playSynthSound('jump');
+                }
+                keys.up = true;
+            }
+            if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+                if (player.isWaterGun) shootWaterBullet();
+            }
+        });
+
+        window.addEventListener('keyup', e => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+            if (e.code === 'ArrowUp' || e.code === 'Space') keys.up = false;
+        });
+
+        document.getElementById('btn-left').addEventListener('touchstart', e => { e.preventDefault(); keys.left = true; });
+        document.getElementById('btn-left').addEventListener('touchend', e => { e.preventDefault(); keys.left = false; });
+        document.getElementById('btn-right').addEventListener('touchstart', e => { e.preventDefault(); keys.right = true; });
+        document.getElementById('btn-right').addEventListener('touchend', e => { e.preventDefault(); keys.right = false; });
+        document.getElementById('btn-jump').addEventListener('touchstart', e => {
+            e.preventDefault();
+            if (player.grounded) {
+                player.vy = player.jumpPower;
+                player.grounded = false;
+                playSynthSound('jump');
+            }
+        });
+        document.getElementById('btn-shoot').addEventListener('touchstart', e => {
+            e.preventDefault();
+            if (player.isWaterGun) shootWaterBullet();
+        });
+
+        document.getElementById('audio-unlock-btn').addEventListener('click', () => {
+            document.getElementById('audio-unlock-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            titleAudio.play().catch(() => {});
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            document.getElementById('start-screen').classList.add('hidden');
+            titleAudio.pause();
+            titleAudio.currentTime = 0;
+            gameState.isActive = true;
+            gameState.stage = 1;
+            gameState.score = 0;
+            gameState.lives = 3;
+            document.getElementById('score-display').innerText = String(gameState.score).padStart(4, '0');
+            document.getElementById('lives-display').innerText = gameState.lives;
+            buildLevel();
+            startDrumSequence();
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            document.getElementById('gameover-screen').classList.add('hidden');
+            panicAudio.pause();
+            panicAudio.currentTime = 0;
+            gameState.isActive = true;
+            gameState.lives = 3;
+            document.getElementById('lives-display').innerText = gameState.lives;
+            buildLevel();
+            startDrumSequence();
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            document.getElementById('clear-screen').classList.add('hidden');
+            gameState.stage++;
+            if (gameState.stage > 30) {
+                triggerEnding();
+            } else {
+                gameState.isActive = true;
+                buildLevel();
+                startDrumSequence();
+            }
+        });
+
+        document.getElementById('end-restart-btn').addEventListener('click', () => {
+            document.getElementById('ending-screen').classList.add('hidden');
+            endingAudio.pause();
+            endingAudio.currentTime = 0;
+            gameState.isActive = true;
+            gameState.stage = 1;
+            gameState.score = 0;
+            gameState.lives = 3;
+            document.getElementById('score-display').innerText = String(gameState.score).padStart(4, '0');
+            document.getElementById('lives-display').innerText = gameState.lives;
+            buildLevel();
+            startDrumSequence();
+        });
+
+        document.getElementById('language-select').addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            updateTexts();
+            try {
+                langChangeAudio.currentTime = 0;
+                langChangeAudio.play().catch(() => {});
+            } catch(err) {}
+        });
+
+        function shootWaterBullet() {
+            playSynthSound('shoot');
+            projectiles.push({
+                x: player.x + player.w,
+                y: player.y + player.h / 2,
+                vx: 12,
+                radius: 8
+            });
+        }
+
+        function triggerGameOver() {
+            gameState.isActive = false;
+            if (drumInterval) clearInterval(drumInterval);
+            panicAudio.pause();
+            panicAudio.currentTime = 0;
+            document.getElementById('gameover-screen').classList.remove('hidden');
+        }
+
+        function triggerStageClear() {
+            gameState.isActive = false;
+            if (drumInterval) clearInterval(drumInterval);
+            panicAudio.pause();
+            panicAudio.currentTime = 0;
+            stageClearAudio.currentTime = 0;
+            stageClearAudio.play().catch(() => {});
+            gameState.lives = Math.min(5, gameState.lives + 1);
+            document.getElementById('lives-display').innerText = gameState.lives;
+            document.getElementById('final-score').innerText = `${i18n[currentLang].scoreText} ${gameState.score}`;
+            document.getElementById('clear-screen').classList.remove('hidden');
+        }
+
+        function triggerEnding() {
+            gameState.isActive = false;
+            if (drumInterval) clearInterval(drumInterval);
+            panicAudio.pause();
+            panicAudio.currentTime = 0;
+            endingAudio.play().catch(() => {});
+            document.getElementById('ending-screen').classList.remove('hidden');
         }
 
         function spawnParticles(x, y, color, count = 15) {
@@ -640,96 +825,38 @@
                     y: y,
                     vx: (Math.random() - 0.5) * 8,
                     vy: (Math.random() - 0.5) * 8,
-                    life: 30,
-                    color: color
+                    color: color,
+                    life: 30
                 });
             }
         }
 
-        let bombSpawnTimer = 0;
-        function update() {
+        function updateGame() {
             if (!gameState.isActive) return;
 
-            bombSpawnTimer++;
-            if (bombSpawnTimer > Math.max(60, 200 - gameState.stage * 4)) {
-                bombSpawnTimer = 0;
-                bombs.push({
-                    x: Math.random() * 1200 + 40,
-                    y: -50,
-                    vy: 3 + Math.random() * 2 + gameState.stage * 0.1,
-                    radius: 18
-                });
-            }
-
-            for (let i = bombs.length - 1; i >= 0; i--) {
-                let b = bombs[i];
-                b.y += b.vy;
-                let dx = player.x + player.w/2 - b.x;
-                let dy = player.y + player.h/2 - b.y;
-                let dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < player.w/2 + b.radius) {
-                    bombHitAudio.currentTime = 0;
-                    bombHitAudio.play().catch(e => {});
-                    triggerGameOver();
-                    return;
-                }
-                if (b.y > 750) bombs.splice(i, 1);
-            }
-
-            if (keys['ArrowLeft'] || keys['KeyA'] || moveLeft) {
-                player.vx = -player.speed;
-            } else if (keys['ArrowRight'] || keys['KeyD'] || moveRight) {
-                player.vx = player.speed;
-            } else {
-                player.vx *= 0.8;
-            }
+            if (keys.left) player.vx = -player.speed;
+            else if (keys.right) player.vx = player.speed;
+            else player.vx = 0;
 
             player.vy += player.gravity;
             player.x += player.vx;
             player.y += player.vy;
 
-            if (player.x < 0) player.x = 0;
-            if (player.x > canvas.width - player.w) player.x = canvas.width - player.w;
+            if (player.x < cameraX) player.x = cameraX;
 
             player.grounded = false;
             for (let p of platforms) {
                 if (player.x + player.w > p.x && player.x < p.x + p.w &&
-                    player.y + player.h >= p.y && player.y + player.h - player.vy <= p.y + 10 &&
-                    player.vy > 0) {
+                    player.y + player.h >= p.y && player.y + player.h <= p.y + p.h + 20 && player.vy >= 0) {
                     player.y = p.y - player.h;
                     player.vy = 0;
                     player.grounded = true;
                 }
             }
 
-            for (let b of mysteryBlocks) {
-                if (!b.hit && player.x + player.w > b.x && player.x < b.x + b.w &&
-                    player.y <= b.y + b.h && player.y + player.h >= b.y + b.h &&
-                    player.vy < 0) {
-                    b.hit = true;
-                    player.vy = 2;
-                    playSynthSound('item_get');
-                    spawnParticles(b.x + b.w/2, b.y, '#fbbf24', 20);
-
-                    if (b.itemType === 'cookie') {
-                        player.isGolden = true;
-                        player.goldenTimer = 300;
-                    } else if (b.itemType === 'butter') {
-                        gameState.lives++;
-                        document.getElementById('lives-display').innerText = gameState.lives;
-                    } else if (b.itemType === 'bibimbap') {
-                        player.isWaterGun = true;
-                        player.waterGunTimer = 450;
-                        document.getElementById('fever-banner').classList.remove('hidden');
-                        document.getElementById('btn-shoot').classList.remove('hidden');
-                    } else if (b.itemType === 'rice') {
-                        monsters = [];
-                        gameState.score += 500;
-                        document.getElementById('score-display').innerText = String(gameState.score).padStart(4, '0');
-                        spawnParticles(canvas.width/2, canvas.height/2, '#ffffff', 50);
-                    }
-                }
-            }
+            cameraX = player.x - 300;
+            if (cameraX < 0) cameraX = 0;
+            if (cameraX > worldWidth - 1280) cameraX = worldWidth - 1280;
 
             if (player.isGolden) {
                 player.goldenTimer--;
@@ -737,6 +864,8 @@
             }
             if (player.isWaterGun) {
                 player.waterGunTimer--;
+                document.getElementById('fever-banner').classList.remove('hidden');
+                document.getElementById('btn-shoot').classList.remove('hidden');
                 if (player.waterGunTimer <= 0) {
                     player.isWaterGun = false;
                     document.getElementById('fever-banner').classList.add('hidden');
@@ -744,57 +873,118 @@
                 }
             }
 
+            for (let b of mysteryBlocks) {
+                if (!b.hit && player.x + player.w > b.x && player.x < b.x + b.w &&
+                    player.y <= b.y + b.h && player.y + player.h >= b.y + b.h && player.vy < 0) {
+                    b.hit = true;
+                    player.vy = 0;
+                    playSynthSound('item_get');
+                    
+                    let roll = Math.random();
+                    if (roll < 0.25) {
+                        player.isGolden = true;
+                        player.goldenTimer = 300;
+                    } else if (roll < 0.50) {
+                        gameState.lives++;
+                        document.getElementById('lives-display').innerText = gameState.lives;
+                    } else if (roll < 0.75) {
+                        player.isWaterGun = true;
+                        player.waterGunTimer = 400;
+                    } else {
+                        monsters.forEach(m => m.alive = false);
+                        spawnParticles(player.x, player.y, '#facc15', 40);
+                    }
+                }
+            }
+
             for (let m of monsters) {
+                if (!m.alive) continue;
                 m.x += m.vx;
                 if (m.x < m.minX || m.x > m.maxX) m.vx *= -1;
 
                 if (player.x + player.w > m.x && player.x < m.x + m.w &&
                     player.y + player.h > m.y && player.y < m.y + m.h) {
-                    if (player.vy > 0 && player.y + player.h - player.vy <= m.y + 15) {
+                    if (player.vy > 0 && player.y + player.h - player.vy <= m.y + 10) {
+                        m.alive = false;
                         player.vy = -10;
-                        monsters = monsters.filter(item => item !== m);
                         gameState.score += 200;
                         document.getElementById('score-display').innerText = String(gameState.score).padStart(4, '0');
-                        spawnParticles(m.x + m.w/2, m.y + m.h/2, '#ef4444', 15);
                     } else {
                         player.deductLife(1);
-                        player.vy = -6;
                     }
                 }
             }
 
-            if (boss) {
+            if (boss !== null) {
                 boss.x += boss.vx;
-                if (boss.x < 300 || boss.x > 1100) boss.vx *= -1;
+                if (boss.x < worldWidth - 800 || boss.x > worldWidth - 400) boss.vx *= -1;
 
                 if (player.x + player.w > boss.x && player.x < boss.x + boss.w &&
                     player.y + player.h > boss.y && player.y < boss.y + boss.h) {
                     player.deductLife(1);
-                    player.vy = -8;
                 }
 
-                let hpPct = Math.max(0, (boss.hp / boss.maxHp) * 100);
-                document.getElementById('boss-hp-bar').style.width = `${hpPct}%`;
-                document.getElementById('boss-hp-text').textContent = `${Math.round(hpPct)}%`;
+                let hpPercent = (boss.hp / boss.maxHp) * 100;
+                document.getElementById('boss-hp-bar').style.width = `${hpPercent}%`;
+                document.getElementById('boss-hp-text`').innerText = `${Math.round(hpPercent)}%`;
             }
 
-            for (let i = projectiles.length - 1; i >= 0; i--) {
-                let pr = projectiles[i];
-                pr.x += pr.vx;
+            if (Math.random() < 0.02) {
+                bombs.push({
+                    x: cameraX + Math.random() * 1280,
+                    y: -50,
+                    vy: 3 + Math.random() * 3,
+                    w: 32,
+                    h: 32
+                });
+            }
 
-                if (boss && pr.x > boss.x && pr.x < boss.x + boss.w && pr.y > boss.y && pr.y < boss.y + boss.h) {
-                    boss.hp--;
-                    projectiles.splice(i, 1);
-                    spawnParticles(boss.x + boss.w/2, boss.y + boss.h/2, '#06b6d4', 10);
-                    if (boss.hp <= 0) {
-                        document.getElementById('boss-hp-container').classList.add('hidden');
-                        boss = null;
-                        gameState.score += 2000;
-                    }
+            for (let i = bombs.length - 1; i >= 0; i--) {
+                let bomb = bombs[i];
+                bomb.y += bomb.vy;
+
+                if (player.x + player.w > bomb.x && player.x < bomb.x + bomb.w &&
+                    player.y + player.h > bomb.y && player.y < bomb.y + bomb.h) {
+                    try {
+                        bombAudio.currentTime = 0;
+                        bombAudio.play().catch(() => {});
+                    } catch(e) {}
+                    bombs.splice(i, 1);
+                    player.deductLife(3, true);
                     continue;
                 }
 
-                if (pr.x > 1300 || pr.x < -50) projectiles.splice(i, 1);
+                if (bomb.y > 720) {
+                    bombs.splice(i, 1);
+                }
+            }
+
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                let proj = projectiles[i];
+                proj.x += proj.vx;
+
+                let hitSomething = false;
+                if (boss !== null && proj.x > boss.x && proj.x < boss.x + boss.w && proj.y > boss.y && proj.y < boss.y + boss.h) {
+                    boss.hp--;
+                    hitSomething = true;
+                    if (boss.hp <= 0) {
+                        boss = null;
+                        document.getElementById('boss-hp-container').classList.add('hidden');
+                        gameState.score += 2000;
+                    }
+                } else {
+                    for (let m of monsters) {
+                        if (m.alive && proj.x > m.x && proj.x < m.x + m.w && proj.y > m.y && proj.y < m.y + m.h) {
+                            m.alive = false;
+                            hitSomething = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (hitSomething || proj.x > cameraX + 1280) {
+                    projectiles.splice(i, 1);
+                }
             }
 
             for (let i = particles.length - 1; i >= 0; i--) {
@@ -805,280 +995,137 @@
                 if (pt.life <= 0) particles.splice(i, 1);
             }
 
-            if (player.y > 800) {
+            if (player.y > 750) {
                 player.deductLife(1, true);
-                player.x = 100;
-                player.y = 100;
+                player.x = Math.max(100, cameraX + 100);
+                player.y = 150;
                 player.vy = 0;
             }
 
-            if (boss === null && gameState.stage % 5 === 0 && monsters.length === 0) {
-                triggerStageClear();
-            } else if (gameState.stage % 5 !== 0 && monsters.length === 0) {
-                triggerStageClear();
+            if (!goalSwitch.pressed && player.x + player.w > goalSwitch.x && player.x < goalSwitch.x + goalSwitch.w &&
+                player.y + player.h >= goalSwitch.y && player.y <= goalSwitch.y + goalSwitch.h) {
+                if (boss === null) {
+                    goalSwitch.pressed = true;
+                    stageClearAudio.currentTime = 0;
+                    stageClearAudio.play().catch(() => {});
+                    triggerStageClear();
+                }
             }
         }
 
-        function triggerStageClear() {
-            gameState.isActive = false;
-            titleAudio.pause();
-            stageBgmAudio.pause();
-            emergencyAudio.pause();
-            if (gameState.stage >= 30) {
-                document.getElementById('ending-screen').classList.remove('hidden');
-            } else {
-                document.getElementById('final-score').innerText = `${i18n[currentLang].scoreText || '점수:'} ${gameState.score}`;
-                document.getElementById('clear-screen').classList.remove('hidden');
-            }
-        }
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        function triggerGameOver() {
-            gameState.isActive = false;
-            titleAudio.pause();
-            stageBgmAudio.pause();
-            emergencyAudio.pause();
-            document.getElementById('gameover-screen').classList.remove('hidden');
-        }
-
-        function draw() {
             const themeIndex = (Math.floor((gameState.stage - 1) / 6)) % themes.length;
             const currentTheme = themes[themeIndex];
-
             ctx.fillStyle = currentTheme.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = currentTheme.platform;
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+
             for (let p of platforms) {
+                ctx.fillStyle = currentTheme.platform;
                 ctx.fillRect(p.x, p.y, p.w, p.h);
                 ctx.fillStyle = currentTheme.accent;
-                ctx.fillRect(p.x, p.y, p.w, 6);
-                ctx.fillStyle = currentTheme.platform;
+                ctx.fillRect(p.x, p.y, p.w, 8);
             }
 
+            ctx.fillStyle = goalSwitch.pressed ? '#10b981' : '#ef4444';
+            ctx.fillRect(goalSwitch.x, goalSwitch.pressed ? goalSwitch.y + 15 : goalSwitch.y, goalSwitch.w, goalSwitch.pressed ? 15 : goalSwitch.h);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(goalSwitch.x, goalSwitch.pressed ? goalSwitch.y + 15 : goalSwitch.y, goalSwitch.w, goalSwitch.pressed ? 15 : goalSwitch.h);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText('SWITCH', goalSwitch.x + 2, (goalSwitch.pressed ? goalSwitch.y + 15 : goalSwitch.y) - 6);
+
             for (let b of mysteryBlocks) {
-                ctx.fillStyle = b.hit ? '#4b5563' : '#d97706';
+                ctx.fillStyle = b.hit ? '#374151' : '#f59e0b';
                 ctx.fillRect(b.x, b.y, b.w, b.h);
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(b.x, b.y, b.w, b.h);
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 20px monospace';
-                ctx.fillText(b.hit ? '·' : '?', b.x + 12, b.y + 28);
+                if (!b.hit) {
+                    ctx.fillStyle = '#000';
+                    ctx.font = 'bold 20px monospace';
+                    ctx.fillText('?', b.x + 12, b.y + 28);
+                }
             }
 
             for (let m of monsters) {
-                ctx.fillStyle = '#ef4444';
+                if (!m.alive) continue;
+                ctx.fillStyle = '#dc2626';
                 ctx.fillRect(m.x, m.y, m.w, m.h);
                 ctx.fillStyle = '#fff';
                 ctx.fillRect(m.x + 8, m.y + 10, 8, 8);
-                ctx.fillRect(m.x + 24, m.y + 10, 8, 8);
+                ctx.fillRect(m.x + 28, m.y + 10, 8, 8);
             }
 
-            if (boss) {
-                ctx.fillStyle = '#dc2626';
+            if (boss !== null) {
+                ctx.fillStyle = '#7f1d1d';
                 ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
-                ctx.fillStyle = '#f59e0b';
-                ctx.fillRect(boss.x + 20, boss.y + 20, 25, 25);
-                ctx.fillRect(boss.x + 75, boss.y + 20, 25, 25);
+                ctx.fillStyle = '#f87171';
+                ctx.fillRect(boss.x + 20, boss.y + 30, 20, 20);
+                ctx.fillRect(boss.x + 80, boss.y + 30, 20, 20);
             }
 
-            for (let b of bombs) {
-                ctx.fillStyle = '#111827';
+            for (let bomb of bombs) {
+                ctx.fillStyle = '#111';
                 ctx.beginPath();
-                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.arc(bomb.x + bomb.w/2, bomb.y + bomb.h/2, bomb.w/2, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.strokeStyle = '#ef4444';
-                ctx.lineWidth = 3;
-                ctx.stroke();
                 ctx.fillStyle = '#ef4444';
-                ctx.font = '10px monospace';
-                ctx.fillText('💣', b.x - 8, b.y + 4);
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText('💣', bomb.x + 4, bomb.y + 22);
             }
 
-            for (let pr of projectiles) {
-                ctx.fillStyle = '#06b6d4';
+            for (let proj of projectiles) {
+                ctx.fillStyle = '#38bdf8';
                 ctx.beginPath();
-                ctx.arc(pr.x, pr.y, 8, 0, Math.PI * 2);
+                ctx.arc(proj.x, proj.y, proj.radius, 0, Math.PI * 2);
                 ctx.fill();
             }
-
-            ctx.fillStyle = player.isGolden ? '#fbbf24' : (player.isWaterGun ? '#06b6d4' : '#10b981');
-            ctx.fillRect(player.x, player.y, player.w, player.h);
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(player.x + 8, player.y + 10, 10, 10);
-            ctx.fillRect(player.x + 30, player.y + 10, 10, 10);
 
             for (let pt of particles) {
                 ctx.fillStyle = pt.color;
                 ctx.fillRect(pt.x, pt.y, 6, 6);
             }
+
+            ctx.fillStyle = player.isGolden ? '#fbbf24' : '#22c55e';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(player.x + 10, player.y + 12, 8, 10);
+            ctx.fillRect(player.x + 30, player.y + 12, 8, 10);
+
+            ctx.restore();
         }
 
-        let animationFrameId;
-        function loop() {
-            update();
-            draw();
-            if (gameState.isActive) {
-                animationFrameId = requestAnimationFrame(loop);
+        setInterval(() => {
+            if (!gameState.isActive) return;
+            gameState.timeLeft--;
+            document.getElementById('timer-display').innerText = gameState.timeLeft;
+
+            if (gameState.timeLeft <= 15 && gameState.lives > 1) {
+                if (panicAudio.paused) panicAudio.play().catch(() => {});
             }
+            if (gameState.lives === 1) {
+                if (panicAudio.paused) panicAudio.play().catch(() => {});
+            }
+
+            if (gameState.timeLeft <= 0) {
+                triggerGameOver();
+            }
+        }, 1000);
+
+        function gameLoop() {
+            updateGame();
+            renderGame();
+            requestAnimationFrame(gameLoop);
         }
-
-        let timerInterval = null;
-        let isRageMode = false;
-
-        function startTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            isRageMode = false;
-            stageBgmAudio.playbackRate = 1.0;
-            stageBgmAudio.currentTime = 0;
-            stageBgmAudio.play().catch(e => {});
-
-            timerInterval = setInterval(() => {
-                if (!gameState.isActive) return;
-                gameState.timeLeft--;
-                document.getElementById('timer-display').innerText = String(gameState.timeLeft).padStart(3, '0');
-
-                if (gameState.timeLeft === 50 && !isRageMode) {
-                    isRageMode = true;
-                    stageBgmAudio.playbackRate = 2.0;
-                    spawnParticles(player.x, player.y, '#ef4444', 25);
-                }
-
-                if (gameState.timeLeft <= 15 || gameState.lives <= 1) {
-                    if (stageBgmAudio) stageBgmAudio.pause();
-                    if (emergencyAudio.paused) {
-                        emergencyAudio.play().catch(e => {});
-                    }
-                }
-
-                if (gameState.timeLeft <= 0) {
-                    emergencyAudio.pause();
-                    player.deductLife(1, true);
-                    const isBossStage = (gameState.stage % 5 === 0);
-                    gameState.timeLeft = isBossStage ? 150 : 100;
-                    isRageMode = false;
-                    stageBgmAudio.playbackRate = 1.0;
-                    stageBgmAudio.currentTime = 0;
-                    stageBgmAudio.play().catch(e => {});
-                }
-            }, 1000);
-        }
-
-        const keys = {};
-        window.addEventListener('keydown', e => {
-            keys[e.code] = true;
-            if ((e.code === 'Space' || e.code === 'ArrowUp') && player.grounded) {
-                player.vy = player.jumpPower;
-                playSynthSound('jump');
-                playNextDrumBeat();
-            }
-            if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
-                if (player.isWaterGun) {
-                    playSynthSound('shoot');
-                    projectiles.push({ x: player.x + player.w, y: player.y + player.h/2, vx: 12 });
-                }
-            }
-        });
-
-        window.addEventListener('keyup', e => {
-            keys[e.code] = false;
-        });
-
-        let moveLeft = false;
-        let moveRight = false;
-
-        document.getElementById('btn-left').addEventListener('touchstart', () => { moveLeft = true; });
-        document.getElementById('btn-left').addEventListener('touchend', () => { moveLeft = false; });
-        document.getElementById('btn-right').addEventListener('touchstart', () => { moveRight = true; });
-        document.getElementById('btn-right').addEventListener('touchend', () => { moveRight = false; });
-        document.getElementById('btn-jump').addEventListener('click', () => {
-            if (player.grounded) {
-                player.vy = player.jumpPower;
-                playSynthSound('jump');
-                playNextDrumBeat();
-            }
-        });
-        document.getElementById('btn-shoot').addEventListener('click', () => {
-            if (player.isWaterGun) {
-                playSynthSound('shoot');
-                projectiles.push({ x: player.x + player.w, y: player.y + player.h/2, vx: 12 });
-            }
-        });
-
-        document.getElementById('language-select').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            langChangeAudio.currentTime = 0;
-            langChangeAudio.play().catch(e => {});
-            updateTexts();
-        });
-
-        document.getElementById('audio-unlock-btn').addEventListener('click', () => {
-            titleAudio.play().catch(e => {});
-            document.getElementById('audio-unlock-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-        });
-
-        document.getElementById('start-btn').addEventListener('click', () => {
-            titleAudio.pause();
-            document.getElementById('start-screen').classList.add('hidden');
-            gameState.stage = 1;
-            gameState.score = 0;
-            gameState.lives = 3;
-            document.getElementById('score-display').innerText = '0000';
-            document.getElementById('lives-display').innerText = '3';
-            gameState.isActive = true;
-            gameState.timeLeft = 100;
-            buildLevel();
-            startTimer();
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            loop();
-        });
-
-        document.getElementById('next-btn').addEventListener('click', () => {
-            document.getElementById('clear-screen').classList.add('hidden');
-            gameState.stage++;
-            gameState.timeLeft = (gameState.stage % 5 === 0) ? 150 : 100;
-            gameState.isActive = true;
-            player.isWaterGun = false;
-            player.isGolden = false;
-            document.getElementById('fever-banner').classList.add('hidden');
-            document.getElementById('btn-shoot').classList.add('hidden');
-            buildLevel();
-            startTimer();
-            player.x = 100;
-            player.y = 100;
-            player.vx = 0;
-            player.vy = 0;
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            loop();
-        });
-
-        document.getElementById('restart-btn').addEventListener('click', () => {
-            document.getElementById('gameover-screen').classList.add('hidden');
-            gameState.lives = 3;
-            gameState.timeLeft = (gameState.stage % 5 === 0) ? 150 : 100;
-            gameState.isActive = true;
-            player.isWaterGun = false;
-            player.isGolden = false;
-            document.getElementById('fever-banner').classList.add('hidden');
-            document.getElementById('btn-shoot').classList.add('hidden');
-            buildLevel();
-            startTimer();
-            player.x = 100;
-            player.y = 100;
-            player.vx = 0;
-            player.vy = 0;
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            loop();
-        });
-
-        document.getElementById('end-restart-btn').addEventListener('click', () => {
-            document.getElementById('ending-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-            titleAudio.play().catch(e => {});
-        });
 
         updateTexts();
+        requestAnimationFrame(gameLoop);
     </script>
 </body>
 </html>
