@@ -323,8 +323,7 @@
             score: 0,
             stage: 1,
             lives: 3,
-            timer: 100,
-            timerInterval: null
+            timer: 100
         };
 
         let player = {
@@ -424,16 +423,19 @@
             startDrumSequence();
         }
 
+        let lastTimerTick = Date.now();
         function update() {
             if (!gameState.isActive) return;
 
-            if (Math.random() < 0.016) {
-                gameState.timer = Math.max(0, gameState.timer - 0.05);
-                document.getElementById('timer-display').innerText = Math.ceil(gameState.timer);
+            let now = Date.now();
+            if (now - lastTimerTick >= 1000) {
+                gameState.timer = Math.max(0, gameState.timer - 1);
+                document.getElementById('timer-display').innerText = gameState.timer;
                 if (gameState.timer <= 0) {
                     triggerGameOver();
                     return;
                 }
+                lastTimerTick = now;
             }
 
             if (keys.left) { player.vx = -player.speed; player.facing = -1; }
@@ -804,6 +806,7 @@
             screamAudio.play().catch(() => {});
             document.getElementById('start-screen').classList.add('hidden');
             gameState.isActive = true;
+            lastTimerTick = Date.now();
             initStage(1);
         });
 
@@ -812,6 +815,7 @@
             gameState.lives = 3;
             document.getElementById('lives-display').innerText = gameState.lives;
             gameState.isActive = true;
+            lastTimerTick = Date.now();
             initStage(gameState.stage);
         });
 
@@ -822,6 +826,7 @@
             pipeAudio.play().catch(() => {});
             screamAudio.play().catch(() => {});
             gameState.isActive = true;
+            lastTimerTick = Date.now();
             initStage(gameState.stage);
         });
 
@@ -831,6 +836,7 @@
             pipeAudio.play().catch(() => {});
             screamAudio.play().catch(() => {});
             gameState.isActive = true;
+            lastTimerTick = Date.now();
             initStage(gameState.stage);
         });
 
@@ -840,6 +846,7 @@
             gameState.score = 0;
             gameState.lives = 3;
             gameState.isActive = true;
+            lastTimerTick = Date.now();
             initStage(1);
         });
 
