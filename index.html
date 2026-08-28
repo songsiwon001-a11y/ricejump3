@@ -2,319 +2,149 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rice Jump! 3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        body {
-            font-family: 'Press Start 2P', monospace;
-            user-select: none;
-            -webkit-user-select: none;
-            background-color: #08090d;
-        }
-        canvas {
-            image-rendering: pixelated;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-        }
-        .retro-text {
-            text-shadow: 3px 3px 0px #000;
-        }
-        .retro-btn {
-            box-shadow: 0px 6px 0px #1f2937;
-            transition: all 0.1s ease;
-        }
-        .retro-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0px 2px 0px #1f2937;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@700&display=swap');
+        body { font-family: 'Dosis', sans-serif; user-select: none; -webkit-user-select: none; }
+        .retro-text { text-shadow: 3px 3px 0px #000; }
+        .retro-btn { box-shadow: 0 4px 0 #1b1b1b; transition: all 0.05s ease; }
+        .retro-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1b1b1b; }
+        canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: -moz-crisp-edges; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen p-2 overflow-y-auto text-white">
+<body class="bg-gray-900 text-white overflow-hidden m-0 p-0 w-screen h-screen flex flex-col items-center justify-center">
 
-    <div class="w-full max-w-4xl flex flex-wrap justify-between items-center mb-2 px-4 z-10 mt-2 gap-2">
-        <div class="flex flex-col">
-            <h1 class="text-xl md:text-2xl text-yellow-400 retro-text tracking-widest animate-pulse" data-i18n="gameTitle">RICE JUMP! 3</h1>
-            <div class="flex items-center gap-2 mt-1">
-                <span id="stage-badge" class="text-[10px] text-emerald-400 font-bold">STAGE 1 / 30</span>
-                <span id="stage-theme-badge" class="text-[9px] text-cyan-400 font-bold">★ EMERALD FOREST</span>
-            </div>
-        </div>
-        
-        <div class="flex items-center bg-gray-900 px-2.5 py-1 rounded-lg border-2 border-gray-700">
-            <span class="text-xs mr-1.5 text-yellow-400">🌐</span>
-            <select id="language-select" class="bg-gray-900 text-white text-[10px] md:text-xs font-bold outline-none cursor-pointer">
-                <option value="ko">한국어</option>
-                <option value="en">English</option>
-            </select>
-        </div>
+    <audio id="bgm-stage" src="bgm1.mp3" loop></audio>
+    <audio id="bgm-underground" src="underground.mp3" loop></audio>
+    <audio id="bgm-water" src="underwater.mp3" loop></audio>
+    <audio id="bgm-snow" src="snowstage.mp3" loop></audio>
+    <audio id="bgm-invincible" src="무적.mp3" loop></audio>
+    <audio id="scream-audio" src="으아아아악.mp3"></audio>
+    <audio id="rice-audio" src="밥솥.mp3"></audio>
+    <audio id="stage-clear-audio" src="stage_clear.mp3"></audio>
+    <audio id="congrats-audio" src="축하합니다.mp3"></audio>
+    <audio id="notification-audio" src="notification.mp3"></audio>
+    <audio id="downtime-audio" src="downtime.mp3" loop></audio>
 
-        <div class="flex items-center space-x-3 text-xs md:text-sm">
-            <div class="flex items-center bg-gray-900 px-3 py-1.5 rounded-lg border-2 border-gray-700">
-                <span class="text-yellow-400 mr-2">⏱</span>
-                <span id="timer-display" class="text-white">100</span>
-            </div>
-            <div class="flex items-center bg-gray-900 px-3 py-1.5 rounded-lg border-2 border-gray-700">
-                <span class="text-red-500 mr-2">❤</span>
-                <span id="lives-display" class="text-white">3</span>
-            </div>
-            <div class="bg-gray-900 px-3 py-1.5 rounded-lg border-2 border-gray-700">
-                <span class="text-cyan-400">SCORE:</span>
-                <span id="score-display" class="text-white">0000</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="relative w-full max-w-4xl aspect-[16/9] bg-slate-900 rounded-xl overflow-hidden border-4 border-slate-700">
-        
-        <div id="boss-hp-container" class="absolute top-4 left-1/2 -translate-x-1/2 w-2/3 max-w-md bg-black/70 border-2 border-red-600 p-1.5 rounded-lg hidden z-10">
-            <div class="flex justify-between text-[8px] md:text-[9px] mb-1">
-                <span id="boss-hp-title" class="text-red-500 font-bold">BOSS : RICE DEMON OVERLORD</span>
-                <span id="boss-hp-text" class="text-white">3 / 3</span>
-            </div>
-            <div class="w-full bg-gray-800 h-3.5 rounded border border-gray-600 overflow-hidden">
-                <div id="boss-hp-bar" class="bg-gradient-to-r from-red-600 to-amber-500 h-full w-full transition-all duration-75"></div>
-            </div>
+    <div id="game-container" class="relative w-full max-w-4xl h-[600px] bg-sky-400 border-4 border-black overflow-hidden shadow-2xl flex flex-col">
+        <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-lg font-bold text-yellow-300">
+            <div>STAGE: <span id="ui-stage">1</span></div>
+            <div>SCORE: <span id="ui-score">0</span></div>
+            <div>LIVES: <span id="ui-lives">3</span></div>
+            <div>TIME: <span id="ui-timer">100</span></div>
         </div>
 
-        <canvas id="gameCanvas" class="w-full h-full block" width="1280" height="720"></canvas>
+        <canvas id="gameCanvas" class="w-full h-full"></canvas>
 
         <div id="audio-unlock-screen" class="absolute inset-0 bg-black flex flex-col items-center justify-center text-center p-6 z-30">
-            <h2 class="text-3xl md:text-5xl text-yellow-400 mb-6 retro-text animate-pulse" data-i18n="gameTitle">RICE JUMP! 3</h2>
-            <p id="unlock-desc" class="text-xs md:text-sm text-gray-300 mb-8 max-w-md leading-relaxed" data-i18n="unlockDesc">
+            <h2 class="text-3xl md:text-5xl text-yellow-400 mb-6 retro-text animate-pulse">RICE JUMP! 3</h2>
+            <p class="text-xs md:text-sm text-gray-300 mb-8 max-w-md leading-relaxed">
                 30개의 더욱 강력해진 스테이지가 당신을 기다립니다!<br>
                 시작하려면 아래 버튼을 탭하세요.
             </p>
-            <button id="audio-unlock-btn" class="retro-btn px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-lg border-2 border-white text-sm md:text-base cursor-pointer pointer-events-auto" data-i18n="tapToStart">
+            <button id="audio-unlock-btn" class="retro-btn px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-lg border-2 border-white text-sm md:text-base cursor-pointer">
                 TAP TO START ADVENTURE
             </button>
         </div>
 
-        <div id="start-screen" class="absolute inset-0 bg-black/85 hidden flex flex-col items-center justify-center text-center p-6 z-20">
-            <h2 class="text-3xl md:text-5xl text-yellow-400 mb-6 retro-text animate-pulse" data-i18n="gameTitle">RICE JUMP! 3</h2>
-            <p id="start-desc" class="text-xs md:text-[11px] text-gray-400 max-w-lg leading-relaxed mb-8" data-i18n="startDesc">
-                30단계의 하드코어 횡스크롤 모험을 돌파하세요!<br><br>
-                ★ 5스테이지마다 강력한 보스 등장! (물총 3번 또는 스위치 제압)<br>
-                ★ 스테이지 7~12 지하, 13~16 물속, 17~30 눈 세계 모험! 대왕 밥솥 무적 아이템 등장!
-            </p>
-            <div class="flex flex-col items-center gap-2">
-                <button id="start-btn" class="retro-btn px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-lg border-2 border-white text-sm md:text-base cursor-pointer pointer-events-auto" data-i18n="startAdventure">
-                    모험 시작하기
-                </button>
-            </div>
-        </div>
-
         <div id="gameover-screen" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-20">
-            <h2 class="text-4xl md:text-5xl text-red-600 mb-4 retro-text animate-pulse" data-i18n="gameOver">GAME OVER</h2>
-            <p id="gameover-desc" class="text-xs text-gray-400 mb-8 leading-relaxed" data-i18n="gameOverDesc">
-                게임 오버되었습니다!<br>현재 스테이지의 처음부터 다시 도전합니다.
-            </p>
-            <button id="restart-btn" class="retro-btn px-8 py-4 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-lg border-2 border-white text-sm cursor-pointer pointer-events-auto" data-i18n="tryAgain">
-                다시 도전하기
-            </button>
+            <h2 class="text-4xl text-red-500 mb-4 retro-text">GAME OVER</h2>
+            <p class="text-gray-300 mb-6 text-sm">밥이 타버렸습니다!</p>
+            <button id="restart-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white cursor-pointer">다시 도전하기</button>
         </div>
 
         <div id="clear-screen" class="absolute inset-0 bg-black/90 hidden flex flex-col items-center justify-center text-center p-6 z-20">
-            <h2 id="clear-title" class="text-3xl md:text-4xl text-emerald-400 mb-4 retro-text animate-pulse" data-i18n="stageClear">STAGE CLEAR!!</h2>
-            <p id="clear-desc" class="text-xs text-yellow-300 mb-4" data-i18n="clearDesc">보상으로 생명력이 회복되었습니다!</p>
-            <p id="final-score" class="text-sm text-white mb-8">현재 점수: 0</p>
-            <button id="next-btn" class="retro-btn px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold rounded-lg border-2 border-white text-sm cursor-pointer pointer-events-auto" data-i18n="nextStage">
-                다음 단계로 진입
-            </button>
+            <h2 id="clear-title" class="text-4xl text-emerald-400 mb-4 retro-text">STAGE CLEAR!</h2>
+            <p id="clear-msg" class="text-gray-200 mb-6 text-sm">훌륭합니다! 다음 단계로 전진하세요.</p>
+            <button id="next-stage-btn" class="retro-btn px-6 py-3 bg-emerald-500 text-black font-bold rounded border-2 border-white cursor-pointer">다음 스테이지</button>
         </div>
 
-        <div id="stage15-special-screen" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-25">
-            <h2 class="text-2xl md:text-3xl text-yellow-400 mb-4 retro-text animate-pulse">STAGE 15 CLEAR!</h2>
-            <p class="text-sm md:text-base text-emerald-300 mb-8 max-w-md leading-relaxed retro-text">
-                헉! 벌써 반이나 오셨네요! 축하합니다!
-            </p>
-            <button id="stage15-next-btn" class="retro-btn px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold rounded-lg border-2 border-white text-sm cursor-pointer pointer-events-auto">
-                후반부 스테이지로 출발!
-            </button>
+        <div id="ending-screen" class="absolute inset-0 bg-yellow-900/95 hidden flex flex-col items-center justify-center text-center p-6 z-20">
+            <h2 class="text-4xl text-yellow-300 mb-4 retro-text">CONGRATULATIONS!</h2>
+            <p class="text-white mb-6 text-sm">당신은 모든 30개 스테이지를 클리어하고 최고의 밥솥 마스터가 되었습니다!</p>
+            <button id="ending-restart-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white cursor-pointer">처음부터 다시하기</button>
         </div>
 
-        <div id="ending-screen" class="absolute inset-0 bg-black hidden flex flex-col items-center justify-center text-center p-6 z-25">
-            <h2 class="text-3xl md:text-4xl text-yellow-400 mb-4 retro-text animate-bounce" data-i18n="congratulations">CONGRATULATIONS!</h2>
-            <p id="ending-msg" class="text-base md:text-xl text-emerald-400 mb-6 retro-text" data-i18n="endingCongrats">수고하셨습니다! 모든 모험이 끝났습니다!</p>
-            <p id="ending-desc" class="text-xs md:text-sm text-gray-300 mb-8 max-w-md leading-relaxed" data-i18n="endingDesc">
-                당신은 30개의 모든 극한 스테이지를 돌파하고 쌀 세계를 구원했습니다!<br>
-                최고의 쌀 모험가로 인정합니다!
-            </p>
-            <button id="end-restart-btn" class="retro-btn px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-lg border-2 border-white text-sm md:text-base cursor-pointer pointer-events-auto" data-i18n="playAgain">
-                다시 해보기
-            </button>
-        </div>
-    </div>
-
-    <div class="w-full max-w-4xl mt-3 px-4 flex flex-col md:flex-row justify-between items-center gap-4 z-10">
-        <div class="hidden md:block text-[9px] text-gray-500 leading-relaxed" data-i18n="controlsHint">
-            [이동]: A, D / ◀ ▶ | [점프]: Space / ▲ | [물총 발사]: Shift
+        <div id="stage15-special-screen" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-20">
+            <div class="relative w-32 h-32 mb-4 flex items-center justify-center bg-gray-800 rounded-full border-4 border-yellow-400 animate-bounce">
+                <span class="text-4xl">😴</span>
+                <span class="absolute -top-2 right-2 text-xs text-blue-300 animate-pulse">Z z z...</span>
+            </div>
+            <h2 class="text-2xl md:text-3xl text-yellow-300 mb-4 retro-text">헉! 벌써 반이나 오셨네요! 축하합니다!</h2>
+            <button id="stage15-special-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white cursor-pointer">후반부 스테이지로 출발!</button>
         </div>
 
-        <div class="flex justify-between w-full md:hidden gap-4 mt-2">
+        <div id="downtime-modal" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-40">
+            <div id="downtime-sleep-anim" class="relative w-32 h-32 mb-6 flex items-center justify-center bg-indigo-900 rounded-full border-4 border-blue-400">
+                <span class="text-5xl">🛏️💤</span>
+                <span class="absolute -top-4 right-4 text-sm text-cyan-300 animate-bounce">Z z z</span>
+            </div>
+            <h2 id="downtime-title" class="text-3xl text-yellow-400 mb-4 retro-text">DOWN TIME</h2>
+            <p id="downtime-msg" class="text-gray-200 mb-6 text-sm max-w-md leading-relaxed">지금은 다운타임 시간입니다.</p>
+            <button id="downtime-ok-btn" class="retro-btn px-6 py-3 bg-blue-500 text-white font-bold rounded border-2 border-white cursor-pointer">확인</button>
+        </div>
+
+        <div id="mobile-controls" class="absolute bottom-2 left-2 right-2 flex justify-between items-center pointer-events-auto z-10 md:hidden px-2">
             <div class="flex gap-2">
-                <button id="btn-left" class="w-14 h-14 bg-gray-800 active:bg-gray-700 border-2 border-gray-600 rounded-xl flex items-center justify-center text-lg text-white select-none pointer-events-auto touch-none">◀</button>
-                <button id="btn-right" class="w-14 h-14 bg-gray-800 active:bg-gray-700 border-2 border-gray-600 rounded-xl flex items-center justify-center text-lg text-white select-none pointer-events-auto touch-none">▶</button>
+                <button id="btn-left" class="w-12 h-12 bg-black/60 active:bg-black/90 text-white rounded-full border-2 border-white text-xl font-bold">◀</button>
+                <button id="btn-right" class="w-12 h-12 bg-black/60 active:bg-black/90 text-white rounded-full border-2 border-white text-xl font-bold">▶</button>
             </div>
-            
-            <div class="flex gap-2 items-center">
-                <button id="btn-shoot" class="px-5 h-14 bg-cyan-600 active:bg-cyan-500 border-2 border-cyan-300 rounded-xl flex items-center justify-center text-xs text-white font-bold select-none pointer-events-auto touch-none" data-i18n="shootBtn">
-                    SHOOT 💦
-                </button>
-                <button id="btn-jump" class="px-6 h-14 bg-emerald-600 active:bg-emerald-500 border-2 border-white rounded-xl flex items-center justify-center text-xs text-white font-bold select-none pointer-events-auto touch-none" data-i18n="jumpBtn">
-                    JUMP 🚀
-                </button>
+            <div class="flex gap-2">
+                <button id="btn-shoot" class="w-12 h-12 bg-blue-600 active:bg-blue-800 text-white rounded-full border-2 border-white text-xs font-bold">WATER</button>
+                <button id="btn-jump" class="w-12 h-12 bg-yellow-500 active:bg-yellow-700 text-black rounded-full border-2 border-white text-xs font-bold">JUMP</button>
             </div>
         </div>
     </div>
-
-    <footer class="w-full max-w-4xl mt-6 mb-4 text-center text-[8px] text-gray-600 tracking-wider">
-        © copyright super rice jamjam studio. All rights reserved.
-    </footer>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
-            canvas.width = 1280;
-            canvas.height = 720;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
         }
+        window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        let currentLang = 'ko';
-
-        const i18n = {
-            ko: {
-                gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30개의 더욱 강력해진 스테이지가 당신을 기다립니다!<br>시작하려면 아래 버튼을 탭하세요.",
-                tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "30단계의 하드코어 횡스크롤 모험을 돌파하세요!<br><br>★ 5스테이지마다 보스전! (물총 3번 또는 스위치 제압)<br>★ 7~12 지하, 13~16 물, 17~30 눈 스테이지 & 대왕 밥솥 무적 아이템!",
-                startAdventure: "모험 시작하기",
-                gameOver: "GAME OVER",
-                gameOverDesc: "게임 오버되었습니다!<br>현재 스테이지의 처음부터 다시 도전합니다.",
-                tryAgain: "다시 도전하기",
-                stageClear: "STAGE CLEAR!!",
-                clearDesc: "보상으로 생명력이 회복되었습니다!",
-                nextStage: "다음 단계로 진입",
-                congratulations: "CONGRATULATIONS!",
-                endingCongrats: "수고하셨습니다! 모든 모험이 끝났습니다!",
-                endingDesc: "당신은 30개의 모든 극한 스테이지를 돌파하고 쌀 세계를 구원했습니다!",
-                playAgain: "다시 해보기",
-                waterGunActive: "★ 물총 모드 활성화 ★",
-                controlsHint: "[이동]: A, D / ◀ ▶ | [점프]: Space / ▲ | [물총 발사]: Shift",
-                shootBtn: "발사 💦",
-                jumpBtn: "점프 🚀"
-            },
-            en: {
-                gameTitle: "RICE JUMP! 3",
-                unlockDesc: "30 powerful new stages await you!<br>Tap the button below to start.",
-                tapToStart: "TAP TO START ADVENTURE",
-                startDesc: "Conquer 30 hardcore side-scrolling stages!<br><br>★ Boss fight every 5 stages!<br>★ Underground, Water & Snow stages with Rice Cooker invincibility items!",
-                startAdventure: "START ADVENTURE",
-                gameOver: "GAME OVER",
-                gameOverDesc: "Game Over!<br>Restarting from current stage.",
-                tryAgain: "TRY AGAIN",
-                stageClear: "STAGE CLEAR!!",
-                clearDesc: "Life recovered as a reward!",
-                nextStage: "NEXT STAGE",
-                congratulations: "CONGRATULATIONS!",
-                endingCongrats: "Great job! All adventures are complete!",
-                endingDesc: "You conquered all 30 extreme stages and saved the rice world!",
-                playAgain: "PLAY AGAIN",
-                waterGunActive: "★ WATER GUN MODE ACTIVE ★",
-                controlsHint: "[Move]: A, D / ◀ ▶ | [Jump]: Space / ▲ | [Shoot]: Shift",
-                shootBtn: "SHOOT 💦",
-                jumpBtn: "JUMP 🚀"
-            }
-        };
-
-        function updateTexts() {
-            const langDict = i18n[currentLang] || i18n['en'];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (langDict[key]) {
-                    el.innerHTML = langDict[key];
-                }
-            });
-        }
-
-        const themes = [
-            { name: "★ EMERALD FOREST", bg: "#064e3b", platform: "#047857", accent: "#34d399" },
-            { name: "★ NEON CYBER", bg: "#311042", platform: "#7c3aed", accent: "#c084fc" },
-            { name: "★ GOLDEN DESERT", bg: "#451a03", platform: "#b45309", accent: "#fbbf24" },
-            { name: "★ FROZEN TUNDRA", bg: "#0f172a", platform: "#1e3a8a", accent: "#60a5fa" },
-            { name: "★ VOLCANIC CORE", bg: "#450a0a", platform: "#991b1b", accent: "#f87171" }
-        ];
-
-        const titleAudio = new Audio('mane_BGM.mp3'); titleAudio.loop = true;
-        const bossAudio = new Audio('보스전.mp3'); bossAudio.loop = true;
-        const undergroundAudio = new Audio('underground.mp3'); undergroundAudio.loop = true;
-        const waterStageAudio = new Audio('underwater.mp3'); waterStageAudio.loop = true;
-        const snowStageAudio = new Audio('snowstage.mp3'); snowStageAudio.loop = true;
-        
-        const gameOverAudio = new Audio('GAME_OVER.mp3');
-        const winAudio = new Audio('win.mp3');
-        const gunShootAudio = new Audio('gun_shoot!.mp3');
-        const bombAudio = new Audio('rice bomb!.wav');
-        const pipeAudio = new Audio('pipe.mp3');
-        const screamAudio = new Audio('으아아아악.mp3');
-        const stageClearAudio = new Audio('stage_clear.mp3');
-        const endingAudio = new Audio('ending.mp3'); endingAudio.loop = true;
-        const cookerAudio = new Audio('밥솥.mp3');
-        const invincAudio = new Audio('무적.mp3'); invincAudio.loop = true;
-        const congratsAudio = new Audio('축하합니다.mp3');
-
-        const drumFiles = ['드럼/bass.mp3', '드럼/snare.mp3', '드럼/hihat.mp3', '드럼/cymbal.mp3', '드럼/tom.mp3'];
-        let drumAudios = drumFiles.map(src => { let a = new Audio(src); a.volume = 0.5; return a; });
-        let drumTimer = null;
-        let drumIndex = 0;
-
-        function startDrumSequence() {
-            if (drumTimer) clearInterval(drumTimer);
-            drumIndex = 0;
-            drumTimer = setInterval(() => {
-                if (!gameState.isActive) return;
-                try {
-                    drumAudios[drumIndex].currentTime = 0;
-                    drumAudios[drumIndex].play().catch(() => {});
-                } catch(e) {}
-                drumIndex = (drumIndex + 1) % drumAudios.length;
-            }, 500);
-        }
-
-        function stopDrumSequence() {
-            if (drumTimer) { clearInterval(drumTimer); drumTimer = null; }
-        }
+        const bgmStage = document.getElementById('bgm-stage');
+        const bgmUnderground = document.getElementById('bgm-underground');
+        const bgmWater = document.getElementById('bgm-water');
+        const bgmSnow = document.getElementById('bgm-snow');
+        const bgmInvincible = document.getElementById('bgm-invincible');
+        const screamAudio = document.getElementById('scream-audio');
+        const riceAudio = document.getElementById('rice-audio');
+        const stageClearAudio = document.getElementById('stage-clear-audio');
+        const congratsAudio = document.getElementById('congrats-audio');
+        const notificationAudio = document.getElementById('notification-audio');
+        const downtimeAudio = document.getElementById('downtime-audio');
 
         function stopAllBgm() {
-            titleAudio.pause(); titleAudio.currentTime = 0;
-            bossAudio.pause(); bossAudio.currentTime = 0;
-            undergroundAudio.pause(); undergroundAudio.currentTime = 0;
-            waterStageAudio.pause(); waterStageAudio.currentTime = 0;
-            snowStageAudio.pause(); snowStageAudio.currentTime = 0;
-            invincAudio.pause(); invincAudio.currentTime = 0;
-            endingAudio.pause(); endingAudio.currentTime = 0;
+            bgmStage.pause(); bgmStage.currentTime = 0;
+            bgmUnderground.pause(); bgmUnderground.currentTime = 0;
+            bgmWater.pause(); bgmWater.currentTime = 0;
+            bgmSnow.pause(); bgmSnow.currentTime = 0;
+            bgmInvincible.pause(); bgmInvincible.currentTime = 0;
         }
 
         function playCurrentBgm() {
             if (!gameState.isActive) return;
-            stopAllBgm();
             if (player.invincible) {
-                invincAudio.play().catch(() => {});
+                stopAllBgm();
+                if (bgmInvincible.paused) bgmInvincible.play().catch(() => {});
                 return;
             }
-            const isBoss = (gameState.stage % 5 === 0);
-            if (isBoss) {
-                bossAudio.play().catch(() => {});
+            stopAllBgm();
+            if (gameState.stage >= 1 && gameState.stage <= 6) {
+                bgmStage.play().catch(() => {});
             } else if (gameState.stage >= 7 && gameState.stage <= 12) {
-                undergroundAudio.play().catch(() => {});
+                bgmUnderground.play().catch(() => {});
             } else if (gameState.stage >= 13 && gameState.stage <= 16) {
-                waterStageAudio.play().catch(() => {});
-            } else if (gameState.stage >= 17) {
-                snowStageAudio.play().catch(() => {});
-            } else {
-                titleAudio.play().catch(() => {});
+                bgmWater.play().catch(() => {});
+            } else if (gameState.stage >= 17 && gameState.stage <= 30) {
+                bgmSnow.play().catch(() => {});
             }
         }
 
@@ -327,8 +157,8 @@
         };
 
         let player = {
-            x: 100, y: 400, w: 42, h: 56,
-            vx: 0, vy: 0, speed: 5, jumpForce: -13,
+            x: 100, y: 350, w: 42, h: 56,
+            vx: 0, vy: 0, speed: 5, jumpForce: -12,
             grounded: false, facing: 1,
             waterGunActive: true,
             invincible: false, invincibleTimer: null
@@ -339,523 +169,555 @@
         let mysteryBlocks = [];
         let enemies = [];
         let projectiles = [];
-        let particles = [];
         let riceCookerItems = [];
         let boss = null;
-        let goalSwitch = { x: 3000, y: 572, w: 48, h: 48, pressed: false };
-        let snowMan = { x: 3000, y: 520, w: 48, h: 64, found: false };
-        let pipeObject = { x: 200, y: 530, w: 55, h: 90 };
+        let goalSwitch = { x: 3000, y: 472, w: 48, h: 48, pressed: false };
+        let snowMan = { x: 3000, y: 420, w: 48, h: 64, found: false };
 
         let keys = { left: false, right: false, jump: false, shoot: false };
+        let lastTimerTick = Date.now();
+        let isDowntimeMode = false;
+        let isPreDowntimeMode = false;
+        let lastNotifiedMinute = -1;
+
+        function checkDowntimeClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+
+            if (hours >= 22 || hours < 8) {
+                isDowntimeMode = true;
+                isPreDowntimeMode = false;
+                stopAllBgm();
+                gameState.isActive = false;
+
+                document.getElementById('audio-unlock-screen').classList.add('hidden');
+                document.getElementById('gameover-screen').classList.add('hidden');
+                document.getElementById('clear-screen').classList.add('hidden');
+                document.getElementById('ending-screen').classList.add('hidden');
+                document.getElementById('stage15-special-screen').classList.add('hidden');
+
+                const downtimeModal = document.getElementById('downtime-modal');
+                downtimeModal.classList.remove('hidden');
+                document.getElementById('downtime-sleep-anim').classList.remove('hidden');
+                document.getElementById('downtime-title').innerText = "DOWN TIME";
+                document.getElementById('downtime-msg').innerHTML = "지금은 다운타임 시간입니다. 안 주무시고 뭐 하세요? 이제 그만 주무실 시간입니다!<br>저희 게임은 밤에 몰겜을 방지하기 위해 다운타임 기능이 있습니다.<br>내일 오전 8시 이후에 다시 오시고 안녕히 주무세요!";
+                document.getElementById('downtime-ok-btn').classList.add('hidden');
+                return;
+            } else {
+                if (isDowntimeMode) {
+                    isDowntimeMode = false;
+                    downtimeAudio.pause();
+                    document.getElementById('downtime-modal').classList.add('hidden');
+                    document.getElementById('audio-unlock-screen').classList.remove('hidden');
+                }
+            }
+
+            if (hours === 21 && minutes >= 50 && minutes < 60) {
+                if (!isPreDowntimeMode) {
+                    isPreDowntimeMode = true;
+                    stopAllBgm();
+                    gameState.isActive = false;
+                    downtimeAudio.currentTime = 0;
+                    downtimeAudio.play().catch(() => {});
+
+                    document.getElementById('audio-unlock-screen').classList.add('hidden');
+                    document.getElementById('gameover-screen').classList.add('hidden');
+                    document.getElementById('clear-screen').classList.add('hidden');
+                    document.getElementById('stage15-special-screen').classList.add('hidden');
+
+                    const downtimeModal = document.getElementById('downtime-modal');
+                    downtimeModal.classList.remove('hidden');
+                    document.getElementById('downtime-sleep-anim').classList.remove('hidden');
+                    document.getElementById('downtime-title').innerText = "DAILY WRAP-UP";
+                    document.getElementById('downtime-msg').innerHTML = "오늘의 하루가 종료되었습니다. 오늘도 수고 많으셨습니다. 안녕히 주무세요!";
+                    document.getElementById('downtime-ok-btn').classList.add('hidden');
+                }
+                return;
+            } else {
+                if (isPreDowntimeMode && (hours !== 21 || minutes < 50)) {
+                    isPreDowntimeMode = false;
+                    downtimeAudio.pause();
+                }
+            }
+
+            if (hours === 21 && (minutes === 30 || minutes === 35 || minutes === 40 || minutes === 45)) {
+                if (lastNotifiedMinute !== minutes) {
+                    lastNotifiedMinute = minutes;
+                    notificationAudio.currentTime = 0;
+                    notificationAudio.play().catch(() => {});
+                    showNoticePopup(`[알림] 오후 ${hours}시 ${minutes}분입니다! 잠시 후 다운타임이 시작됩니다.`);
+                }
+            } else if (minutes !== 30 && minutes !== 35 && minutes !== 40 && minutes !== 45) {
+                lastNotifiedMinute = minutes;
+            }
+        }
+
+        function showNoticePopup(msg) {
+            const downtimeModal = document.getElementById('downtime-modal');
+            downtimeModal.classList.remove('hidden');
+            document.getElementById('downtime-sleep-anim').classList.add('hidden');
+            document.getElementById('downtime-title').innerText = "NOTICE";
+            document.getElementById('downtime-msg').innerText = msg;
+            document.getElementById('downtime-ok-btn').classList.remove('hidden');
+        }
+
+        setInterval(checkDowntimeClock, 1000);
+        checkDowntimeClock();
+
+        document.getElementById('downtime-ok-btn').addEventListener('click', () => {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            if (!((hours >= 22 || hours < 8) || (hours === 21 && minutes >= 50))) {
+                document.getElementById('downtime-modal').classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('keydown', e => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+                if (!keys.jump) jumpPlayer();
+                keys.jump = true;
+            }
+            if (e.code === 'KeyX' || e.code === 'KeyJ') shootWaterGun();
+        });
+
+        window.addEventListener('keyup', e => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keys.jump = false;
+        });
+
+        document.getElementById('btn-left').addEventListener('touchstart', () => keys.left = true);
+        document.getElementById('btn-left').addEventListener('touchend', () => keys.left = false);
+        document.getElementById('btn-right').addEventListener('touchstart', () => keys.right = true);
+        document.getElementById('btn-right').addEventListener('touchend', () => keys.right = false);
+        document.getElementById('btn-jump').addEventListener('click', () => jumpPlayer());
+        document.getElementById('btn-shoot').addEventListener('click', () => shootWaterGun());
+
+        document.getElementById('audio-unlock-btn').addEventListener('click', () => {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+
+            if (hours >= 22 || hours < 8) return;
+            if (hours === 21 && minutes >= 50) {
+                showNoticePopup("오늘의 하루가 종료되었습니다. 오늘도 수고 많으셨습니다. 안녕히 주무세요!");
+                return;
+            }
+
+            document.getElementById('audio-unlock-screen').classList.add('hidden');
+            screamAudio.currentTime = 0;
+            screamAudio.play().catch(() => {});
+            gameState.isActive = true;
+            lastTimerTick = Date.now();
+            initStage(1);
+        });
+
+        function jumpPlayer() {
+            if (!gameState.isActive) return;
+            if (player.grounded) {
+                player.vy = player.jumpForce;
+                player.grounded = false;
+            }
+        }
+
+        function shootWaterGun() {
+            if (!gameState.isActive || !player.waterGunActive) return;
+            projectiles.push({
+                x: player.x + (player.facing > 0 ? player.w : -10),
+                y: player.y + player.h / 2 - 4,
+                w: 16, h: 8, vx: player.facing * 10, type: 'water'
+            });
+        }
 
         function initStage(stageNum) {
             gameState.stage = stageNum;
-            document.getElementById('stage-badge').innerText = `STAGE ${stageNum} / 30`;
-            
-            const isUnderground = (stageNum >= 7 && stageNum <= 12);
-            const isWaterStage = (stageNum >= 13 && stageNum <= 16);
-            const isSnowStage = (stageNum >= 17);
-            const isBossStage = (stageNum % 5 === 0);
-
-            let themeIdx = isSnowStage ? 4 : Math.floor((stageNum - 1) / 6) % themes.length;
-            document.getElementById('stage-theme-badge').innerText = themes[themeIdx].name;
-
-            player.x = 100;
-            player.y = 400;
+            gameState.timer = 100;
+            player.x = 80;
+            player.y = 300;
             player.vx = 0;
             player.vy = 0;
             cameraX = 0;
-            gameState.timer = 100;
-            document.getElementById('timer-display').innerText = gameState.timer;
+            projectiles = [];
+            riceCookerItems = [];
+            boss = null;
 
             platforms = [];
             mysteryBlocks = [];
             enemies = [];
-            projectiles = [];
-            particles = [];
-            riceCookerItems = [];
-            boss = null;
 
-            let levelWidth = 3500;
-            platforms.push({ x: 0, y: 620, w: levelWidth, h: 100 });
+            let groundY = 520;
+            let currentX = 0;
+            let totalWidth = 3200;
 
-            for (let i = 600; i < levelWidth - 400; i += 320) {
-                let pW = 160 + Math.random() * 100;
-                let pH = 24;
-                let pY = 380 + (Math.sin(i) * 100);
-                platforms.push({ x: i, y: pY, w: pW, h: pH });
+            while (currentX < totalWidth) {
+                let gapWidth = 60 + Math.random() * 50;
+                let platWidth = 280 + Math.random() * 200;
 
-                if (Math.random() > 0.4) {
-                    mysteryBlocks.push({ x: i + 60, y: pY - 80, w: 36, h: 36, hit: false, type: Math.random() > 0.5 ? 'cooker' : 'score' });
+                for (let px = currentX; px < currentX + platWidth && px < totalWidth; px += 50) {
+                    platforms.push({ x: px, y: groundY, w: 50, h: 80, type: stageNum >= 17 ? 'snow' : (stageNum >= 13 ? 'water' : (stageNum >= 7 ? 'underground' : 'ground')) });
                 }
 
-                if (!isBossStage && Math.random() > 0.3) {
+                if (platWidth > 150 && currentX > 150) {
                     enemies.push({
-                        x: i + 40, y: pY - 44, w: 38, h: 44,
-                        vx: (Math.random() > 0.5 ? 2 : -2),
-                        minX: i, maxX: i + pW - 38, alive: true
+                        x: currentX + 70, y: groundY - 40, w: 36, h: 36, vx: 1.5, minX: currentX + 30, maxX: currentX + platWidth - 70, alive: true
                     });
                 }
+
+                if (Math.random() < 0.6 && currentX > 250) {
+                    riceCookerItems.push({
+                        x: currentX + 100, y: groundY - 120, w: 40, h: 40, collected: false
+                    });
+                }
+
+                currentX += platWidth + gapWidth;
             }
 
-            riceCookerItems.push({ x: 1500, y: 480, w: 50, h: 50, collected: false });
-            pipeObject = { x: 300, y: 530, w: 55, h: 90 };
-
-            if (isSnowStage) {
-                snowMan = { x: levelWidth - 300, y: 530, w: 48, h: 64, found: false };
-            } else {
-                goalSwitch = { x: levelWidth - 300, y: 572, w: 48, h: 48, pressed: false };
+            for (let i = 0; i < 5; i++) {
+                mysteryBlocks.push({
+                    x: 500 + i * 500, y: 320 - (i % 2) * 50, w: 40, h: 40, hit: false, item: 'rice'
+                });
             }
 
-            if (isBossStage) {
+            if (stageNum % 5 === 0) {
                 boss = {
-                    x: levelWidth - 600, y: 480, w: 90, h: 110,
-                    hp: 3, maxHp: 3, vx: -2, alive: true, hitCooldown: 0
+                    x: 2800, y: groundY - 100, w: 80, h: 80, hp: 5, maxHp: 5, vx: 1, dir: 1, alive: true
                 };
-                document.getElementById('boss-hp-container').classList.remove('hidden');
-                document.getElementById('boss-hp-bar').style.width = '100%';
-                document.getElementById('boss-hp-text').innerText = '3 / 3';
-            } else {
-                document.getElementById('boss-hp-container').classList.add('hidden');
             }
+
+            goalSwitch.x = totalWidth - 200;
+            goalSwitch.y = groundY - 48;
+            goalSwitch.pressed = false;
+
+            snowMan.x = totalWidth - 220;
+            snowMan.y = groundY - 64;
+            snowMan.found = false;
 
             playCurrentBgm();
-            startDrumSequence();
         }
 
-        let lastTimerTick = Date.now();
+        function activateInvincibleMode() {
+            player.invincible = true;
+            riceAudio.currentTime = 0;
+            riceAudio.play().catch(() => {});
+            playCurrentBgm();
+
+            if (player.invincibleTimer) clearTimeout(player.invincibleTimer);
+            player.invincibleTimer = setTimeout(() => {
+                player.invincible = false;
+                playCurrentBgm();
+            }, 8000);
+        }
+
         function update() {
             if (!gameState.isActive) return;
 
-            let now = Date.now();
-            if (now - lastTimerTick >= 1000) {
-                gameState.timer = Math.max(0, gameState.timer - 1);
-                document.getElementById('timer-display').innerText = gameState.timer;
+            if (Date.now() - lastTimerTick >= 1000) {
+                gameState.timer--;
+                lastTimerTick = Date.now();
                 if (gameState.timer <= 0) {
-                    triggerGameOver();
-                    return;
+                    playerDie();
                 }
-                lastTimerTick = now;
             }
 
-            if (keys.left) { player.vx = -player.speed; player.facing = -1; }
-            else if (keys.right) { player.vx = player.speed; player.facing = 1; }
-            else { player.vx = 0; }
+            if (keys.left) {
+                player.vx = -player.speed;
+                player.facing = -1;
+            } else if (keys.right) {
+                player.vx = player.speed;
+                player.facing = 1;
+            } else {
+                player.vx = 0;
+            }
 
-            let isWater = (gameState.stage >= 13 && gameState.stage <= 16);
-            let gravity = isWater ? 0.35 : 0.6;
-            player.vy += gravity;
-
+            player.vy += 0.5;
             player.x += player.vx;
             player.y += player.vy;
 
             player.grounded = false;
-            for (let p of platforms) {
+            platforms.forEach(p => {
                 if (player.x + player.w > p.x && player.x < p.x + p.w &&
                     player.y + player.h >= p.y && player.y + player.h - player.vy <= p.y + 10) {
                     player.y = p.y - player.h;
                     player.vy = 0;
                     player.grounded = true;
                 }
-            }
+            });
 
-            if (player.x < 0) player.x = 0;
-
-            cameraX = player.x - canvas.width / 3;
-            if (cameraX < 0) cameraX = 0;
-
-            for (let i = projectiles.length - 1; i >= 0; i--) {
-                let pr = projectiles[i];
-                pr.x += pr.vx;
-                if (boss && boss.alive) {
-                    if (pr.x > boss.x && pr.x < boss.x + boss.w && pr.y > boss.y && pr.y < boss.y + boss.h) {
-                        boss.hp--;
-                        boss.hitCooldown = 30;
-                        projectiles.splice(i, 1);
-                        document.getElementById('boss-hp-bar').style.width = `${(boss.hp / boss.maxHp) * 100}%`;
-                        document.getElementById('boss-hp-text').innerText = `${boss.hp} / 3`;
-                        if (boss.hp <= 0) {
-                            boss.alive = false;
-                            document.getElementById('boss-hp-container').classList.add('hidden');
-                            winAudio.play().catch(() => {});
-                            triggerStageClear();
-                        }
-                        continue;
-                    }
-                }
-                for (let e of enemies) {
-                    if (e.alive && pr.x > e.x && pr.x < e.x + e.w && pr.y > e.y && pr.y < e.y + e.h) {
-                        e.alive = false;
-                        projectiles.splice(i, 1);
+            mysteryBlocks.forEach(mb => {
+                if (player.x + player.w > mb.x && player.x < mb.x + mb.w &&
+                    player.y <= mb.y + mb.h && player.y - player.vy >= mb.y + mb.h - 10) {
+                    player.vy = 2;
+                    if (!mb.hit) {
+                        mb.hit = true;
+                        activateInvincibleMode();
                         gameState.score += 200;
-                        break;
                     }
                 }
-            }
+            });
 
-            for (let e of enemies) {
-                if (!e.alive) continue;
-                e.x += e.vx;
-                if (e.x < e.minX || e.x > e.maxX) e.vx *= -1;
-
-                if (!player.invincible && player.x + player.w > e.x && player.x < e.x + e.w && player.y + player.h > e.y && player.y < e.y + e.h) {
-                    if (player.vy > 0 && player.y + player.h - player.vy <= e.y + 15) {
-                        e.alive = false;
-                        player.vy = -9;
-                        gameState.score += 300;
-                    } else {
-                        loseLife();
-                    }
+            riceCookerItems.forEach(rc => {
+                if (!rc.collected &&
+                    player.x + player.w > rc.x && player.x < rc.x + rc.w &&
+                    player.y + player.h > rc.y && player.y < rc.y + rc.h) {
+                    rc.collected = true;
+                    activateInvincibleMode();
+                    gameState.score += 500;
                 }
+            });
+
+            if (player.y > canvas.height + 100) {
+                playerDie();
             }
+
+            enemies.forEach(en => {
+                if (!en.alive) return;
+                en.x += en.vx;
+                if (en.x < en.minX || en.x > en.maxX) en.vx *= -1;
+
+                if (!player.invincible &&
+                    player.x + player.w > en.x + 4 && player.x < en.x + en.w - 4 &&
+                    player.y + player.h > en.y + 4 && player.y < en.y + en.h) {
+                    playerDie();
+                }
+            });
 
             if (boss && boss.alive) {
-                let distToSwitch = Math.abs(boss.x - goalSwitch.x);
-                if (distToSwitch < 600) {
-                    if (player.x > boss.x) boss.x += 3.5;
-                    else boss.x -= 3.5;
-                } else {
-                    boss.x += boss.vx;
-                    if (boss.x < 2500 || boss.x > 3200) boss.vx *= -1;
-                }
+                boss.x += boss.vx * boss.dir;
+                if (boss.x < 2500 || boss.x > 3100) boss.dir *= -1;
 
-                if (!player.invincible && player.x + player.w > boss.x && player.x < boss.x + boss.w && player.y + player.h > boss.y && player.y < boss.y + boss.h) {
-                    loseLife();
+                if (!player.invincible &&
+                    player.x + player.w > boss.x && player.x < boss.x + boss.w &&
+                    player.y + player.h > boss.y && player.y < boss.y + boss.h) {
+                    playerDie();
                 }
             }
 
-            for (let rc of riceCookerItems) {
-                if (!rc.collected && player.x + player.w > rc.x && player.x < rc.x + rc.w && player.y + player.h > rc.y && player.y < rc.y + rc.h) {
-                    rc.collected = true;
-                    cookerAudio.play().catch(() => {});
-                    activateInvincibility();
-                }
-            }
-
-            for (let mb of mysteryBlocks) {
-                if (!mb.hit && player.vy < 0 && player.x + player.w > mb.x && player.x < mb.x + mb.w && player.y <= mb.y + mb.h && player.y >= mb.y) {
-                    mb.hit = true;
-                    if (mb.type === 'cooker') {
-                        riceCookerItems.push({ x: mb.x, y: mb.y - 50, w: 50, h: 50, collected: false });
-                        cookerAudio.play().catch(() => {});
-                    } else {
-                        gameState.score += 500;
-                        bombAudio.play().catch(() => {});
+            projectiles.forEach((proj, idx) => {
+                proj.x += proj.vx;
+                if (boss && boss.alive &&
+                    proj.x + proj.w > boss.x && proj.x < boss.x + boss.w &&
+                    proj.y + proj.h > boss.y && proj.y < boss.y + boss.h) {
+                    boss.hp--;
+                    projectiles.splice(idx, 1);
+                    if (boss.hp <= 0) {
+                        boss.alive = false;
+                        gameState.score += 2000;
                     }
-                    player.vy = 2;
                 }
-            }
+            });
 
-            if (gameState.stage >= 17) {
-                if (!snowMan.found && player.x + player.w > snowMan.x && player.x < snowMan.x + snowMan.w && player.y + player.h > snowMan.y && player.y < snowMan.y + snowMan.h) {
+            if (gameState.stage >= 17 && gameState.stage <= 30) {
+                if (!snowMan.found &&
+                    player.x + player.w > snowMan.x && player.x < snowMan.x + snowMan.w &&
+                    player.y + player.h > snowMan.y && player.y < snowMan.y + snowMan.h) {
                     snowMan.found = true;
                     triggerStageClear();
                 }
             } else {
-                if (!goalSwitch.pressed && player.x + player.w > goalSwitch.x && player.x < goalSwitch.x + goalSwitch.w && player.y + player.h > goalSwitch.y && player.y < goalSwitch.y + goalSwitch.h) {
+                if (!goalSwitch.pressed &&
+                    player.x + player.w > goalSwitch.x && player.x < goalSwitch.x + goalSwitch.w &&
+                    player.y + player.h > goalSwitch.y && player.y < goalSwitch.y + goalSwitch.h) {
                     goalSwitch.pressed = true;
-                    if (gameState.stage === 15) {
-                        triggerStage15SpecialEvent();
-                    } else {
-                        triggerStageClear();
-                    }
+                    triggerStageClear();
                 }
             }
 
-            if (player.y > 750) {
-                loseLife();
-            }
+            cameraX = player.x - canvas.width / 3;
+            if (cameraX < 0) cameraX = 0;
 
-            document.getElementById('score-display').innerText = gameState.score.toString().padStart(4, '0');
+            document.getElementById('ui-stage').innerText = gameState.stage;
+            document.getElementById('ui-score').innerText = gameState.score;
+            document.getElementById('ui-lives').innerText = gameState.lives;
+            document.getElementById('ui-timer').innerText = gameState.timer;
         }
 
-        function activateInvincibility() {
-            player.invincible = true;
-            stopAllBgm();
-            invincAudio.play().catch(() => {});
-            if (player.invincibleTimer) clearTimeout(player.invincibleTimer);
-            player.invincibleTimer = setTimeout(() => {
-                player.invincible = false;
-                playCurrentBgm();
-            }, 10000);
-        }
-
-        function loseLife() {
+        function playerDie() {
             if (player.invincible) return;
             gameState.lives--;
-            document.getElementById('lives-display').innerText = gameState.lives;
-            screamAudio.play().catch(() => {});
             if (gameState.lives <= 0) {
-                triggerGameOver();
+                gameState.isActive = false;
+                stopAllBgm();
+                document.getElementById('gameover-screen').classList.remove('hidden');
             } else {
-                initStage(gameState.stage);
+                player.x = 80;
+                player.y = 200;
+                player.vy = 0;
             }
-        }
-
-        function triggerGameOver() {
-            gameState.isActive = false;
-            stopAllBgm();
-            stopDrumSequence();
-            gameOverAudio.play().catch(() => {});
-            document.getElementById('gameover-screen').classList.remove('hidden');
         }
 
         function triggerStageClear() {
             gameState.isActive = false;
             stopAllBgm();
-            stopDrumSequence();
+
+            if (gameState.stage === 15) {
+                stageClearAudio.currentTime = 0;
+                stageClearAudio.play().catch(() => {});
+                setTimeout(() => {
+                    congratsAudio.currentTime = 0;
+                    congratsAudio.play().catch(() => {});
+                    document.getElementById('stage15-special-screen').classList.remove('hidden');
+                }, 3000);
+                return;
+            }
+
+            stageClearAudio.currentTime = 0;
             stageClearAudio.play().catch(() => {});
+
             if (gameState.stage >= 30) {
-                endingAudio.play().catch(() => {});
                 document.getElementById('ending-screen').classList.remove('hidden');
             } else {
-                document.getElementById('final-score').innerText = `현재 점수: ${gameState.score}`;
                 document.getElementById('clear-screen').classList.remove('hidden');
+                document.getElementById('clear-msg').innerText = `STAGE ${gameState.stage} 클리어 완료!`;
             }
         }
 
-        function triggerStage15SpecialEvent() {
-            gameState.isActive = false;
-            stopAllBgm();
-            stopDrumSequence();
-            stageClearAudio.play().catch(() => {});
-            setTimeout(() => {
-                stageClearAudio.pause();
-                stageClearAudio.currentTime = 0;
-                congratsAudio.play().catch(() => {});
-                document.getElementById('stage15-special-screen').classList.remove('hidden');
-            }, 3000);
-        }
+        document.getElementById('next-stage-btn').addEventListener('click', () => {
+            document.getElementById('clear-screen').classList.add('hidden');
+            if (gameState.stage === 12 || gameState.stage === 16) {
+                screamAudio.currentTime = 0;
+                screamAudio.play().catch(() => {});
+            }
+            initStage(gameState.stage + 1);
+            gameState.isActive = true;
+            lastTimerTick = Date.now();
+        });
 
-        function render() {
+        document.getElementById('stage15-special-btn').addEventListener('click', () => {
+            document.getElementById('stage15-special-screen').classList.add('hidden');
+            screamAudio.currentTime = 0;
+            screamAudio.play().catch(() => {});
+            initStage(16);
+            gameState.isActive = true;
+            lastTimerTick = Date.now();
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            document.getElementById('gameover-screen').classList.add('hidden');
+            gameState.lives = 3;
+            gameState.score = 0;
+            initStage(1);
+            gameState.isActive = true;
+            lastTimerTick = Date.now();
+        });
+
+        document.getElementById('ending-restart-btn').addEventListener('click', () => {
+            document.getElementById('ending-screen').classList.add('hidden');
+            gameState.lives = 3;
+            gameState.score = 0;
+            initStage(1);
+            gameState.isActive = true;
+            lastTimerTick = Date.now();
+        });
+
+        function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            const isUnderground = (gameState.stage >= 7 && gameState.stage <= 12);
-            const isWaterStage = (gameState.stage >= 13 && gameState.stage <= 16);
-            const isSnowStage = (gameState.stage >= 17);
-            let themeIdx = isSnowStage ? 4 : Math.floor((gameState.stage - 1) / 6) % themes.length;
-            const currentTheme = themes[themeIdx];
-            
-            let bgCol = currentTheme.bg;
-            if (isUnderground) bgCol = "#1a0b2e";
-            if (isWaterStage) bgCol = "#0c4a6e";
-            if (isSnowStage) bgCol = "#0f172a";
+            let stageNum = gameState.stage;
+            let skyColor = "#87CEEB";
+            if (stageNum >= 7 && stageNum <= 12) skyColor = "#1a1a2e";
+            else if (stageNum >= 13 && stageNum <= 16) skyColor = "#023e8a";
+            else if (stageNum >= 17 && stageNum <= 30) skyColor = "#caf0f8";
 
-            ctx.fillStyle = bgCol;
+            ctx.fillStyle = skyColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.save();
             ctx.translate(-cameraX, 0);
 
-            for (let p of platforms) {
-                let platCol = currentTheme.platform;
-                let accCol = currentTheme.accent;
-                if (isUnderground) { platCol = "#4c1d95"; accCol = "#8b5cf6"; }
-                if (isWaterStage) { platCol = "#0284c7"; accCol = "#38bdf8"; }
-                if (isSnowStage) { platCol = "#334155"; accCol = "#f1f5f9"; }
-
-                ctx.fillStyle = platCol;
+            platforms.forEach(p => {
+                if (p.type === 'snow') ctx.fillStyle = "#ffffff";
+                else if (p.type === 'water') ctx.fillStyle = "#0077b6";
+                else if (p.type === 'underground') ctx.fillStyle = "#3a3a3a";
+                else ctx.fillStyle = "#2baf2b";
                 ctx.fillRect(p.x, p.y, p.w, p.h);
-                ctx.fillStyle = accCol;
-                ctx.fillRect(p.x, p.y, p.w, 8);
-            }
 
-            if (isWaterStage) {
-                ctx.fillStyle = "rgba(56, 189, 248, 0.25)";
-                ctx.fillRect(cameraX, 480, 1280, 240);
-            }
-
-            ctx.fillStyle = isSnowStage ? "#38bdf8" : "#059669";
-            ctx.fillRect(pipeObject.x, pipeObject.y, pipeObject.w, pipeObject.h);
-            ctx.fillStyle = isSnowStage ? "#bae6fd" : "#10b981";
-            ctx.fillRect(pipeObject.x - 6, pipeObject.y, pipeObject.w + 12, 16);
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(pipeObject.x, pipeObject.y, pipeObject.w, pipeObject.h);
-
-            if (isSnowStage) {
-                ctx.fillStyle = snowMan.found ? '#34d399' : '#ffffff';
-                ctx.beginPath();
-                ctx.arc(snowMan.x + snowMan.w/2, snowMan.y + 40, 16, 0, Math.PI * 2);
-                ctx.arc(snowMan.x + snowMan.w/2, snowMan.y + 15, 12, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#f97316';
-                ctx.fillRect(snowMan.x + snowMan.w/2 - 2, snowMan.y + 12, 8, 4);
-            } else {
-                ctx.fillStyle = goalSwitch.pressed ? '#10b981' : '#ef4444';
-                ctx.fillRect(goalSwitch.x, goalSwitch.pressed ? goalSwitch.y + 15 : goalSwitch.y, goalSwitch.w, goalSwitch.pressed ? 15 : goalSwitch.h);
-                ctx.strokeStyle = '#fff';
+                ctx.strokeStyle = "#000";
                 ctx.lineWidth = 2;
-                ctx.strokeRect(goalSwitch.x, goalSwitch.pressed ? goalSwitch.y + 15 : goalSwitch.y, goalSwitch.w, goalSwitch.pressed ? 15 : goalSwitch.h);
-            }
+                ctx.strokeRect(p.x, p.y, p.w, p.h);
+            });
 
-            for (let mb of mysteryBlocks) {
-                ctx.fillStyle = mb.hit ? '#4b5563' : '#d97706';
+            mysteryBlocks.forEach(mb => {
+                ctx.fillStyle = mb.hit ? "#888" : "#f39c12";
                 ctx.fillRect(mb.x, mb.y, mb.w, mb.h);
-                ctx.strokeStyle = '#000';
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#000";
                 ctx.strokeRect(mb.x, mb.y, mb.w, mb.h);
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px monospace';
-                ctx.fillText('?', mb.x + 12, mb.y + 24);
-            }
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 20px Dosis";
+                ctx.fillText("?", mb.x + 14, mb.y + 28);
+            });
 
-            for (let rc of riceCookerItems) {
+            riceCookerItems.forEach(rc => {
                 if (!rc.collected) {
-                    ctx.fillStyle = '#f59e0b';
+                    ctx.fillStyle = "#ff4757";
                     ctx.fillRect(rc.x, rc.y, rc.w, rc.h);
-                    ctx.fillStyle = '#dc2626';
-                    ctx.fillRect(rc.x + 8, rc.y + 8, rc.w - 16, rc.h - 16);
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 8px monospace';
-                    ctx.fillText('COOKER', rc.x + 4, rc.y + 28);
+                    ctx.strokeStyle = "#000";
+                    ctx.strokeRect(rc.x, rc.y, rc.w, rc.h);
+                    ctx.fillStyle = "#fff";
+                    ctx.font = "12px Dosis";
+                    ctx.fillText("RICE", rc.x + 8, rc.y + 24);
                 }
-            }
+            });
 
-            for (let e of enemies) {
-                if (!e.alive) continue;
-                ctx.fillStyle = '#ef4444';
-                ctx.fillRect(e.x, e.y, e.w, e.h);
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(e.x + 6, e.y + 10, 8, 8);
-                ctx.fillRect(e.x + 22, e.y + 10, 8, 8);
-            }
+            enemies.forEach(en => {
+                if (en.alive) {
+                    ctx.fillStyle = "#e74c3c";
+                    ctx.fillRect(en.x, en.y, en.w, en.h);
+                    ctx.fillStyle = "#fff";
+                    ctx.fillRect(en.x + 6, en.y + 8, 6, 6);
+                    ctx.fillRect(en.x + 22, en.y + 8, 6, 6);
+                }
+            });
 
             if (boss && boss.alive) {
-                ctx.fillStyle = '#991b1b';
+                ctx.fillStyle = "#8e44ad";
                 ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
-                ctx.fillStyle = '#f87171';
-                ctx.fillRect(boss.x + 10, boss.y + 15, boss.w - 20, boss.h - 30);
-                ctx.fillStyle = '#ff0';
-                ctx.font = 'bold 10px monospace';
-                ctx.fillText('RICE BOSS', boss.x + 8, boss.y - 8);
+                ctx.fillStyle = "#f1c40f";
+                ctx.fillRect(boss.x + 10, boss.y - 15, (boss.hp / boss.maxHp) * 60, 8);
             }
 
-            for (let pr of projectiles) {
-                ctx.fillStyle = '#38bdf8';
+            if (stageNum >= 17 && stageNum <= 30) {
+                ctx.fillStyle = "#ffffff";
                 ctx.beginPath();
-                ctx.arc(pr.x, pr.y, 6, 0, Math.PI * 2);
+                ctx.arc(snowMan.x + 24, snowMan.y + 20, 16, 0, Math.PI * 2);
+                ctx.arc(snowMan.x + 24, snowMan.y + 48, 22, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.strokeStyle = "#000";
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = goalSwitch.pressed ? "#2ecc71" : "#e67e22";
+                ctx.fillRect(goalSwitch.x, goalSwitch.y, goalSwitch.w, goalSwitch.h);
             }
 
-            ctx.fillStyle = player.invincible ? '#fbbf24' : '#facc15';
+            projectiles.forEach(proj => {
+                ctx.fillStyle = "#00d2d3";
+                ctx.beginPath();
+                ctx.arc(proj.x + proj.w / 2, proj.y + proj.h / 2, 6, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.fillStyle = player.invincible ? "#f1c40f" : "#fffa65";
             ctx.fillRect(player.x, player.y, player.w, player.h);
-            ctx.strokeStyle = '#000';
+            ctx.strokeStyle = "#000";
             ctx.lineWidth = 2;
             ctx.strokeRect(player.x, player.y, player.w, player.h);
 
-            ctx.fillStyle = '#000';
-            let eyeX = player.facing === 1 ? player.x + 26 : player.x + 6;
-            ctx.fillRect(eyeX, player.y + 14, 6, 8);
+            ctx.fillStyle = "#000";
+            let eyeOffset = player.facing > 0 ? 26 : 10;
+            ctx.fillRect(player.x + eyeOffset, player.y + 14, 6, 8);
 
             ctx.restore();
         }
 
         function gameLoop() {
             update();
-            render();
+            draw();
             requestAnimationFrame(gameLoop);
         }
 
-        window.addEventListener('keydown', e => {
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
-            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
-            if (e.code === 'ArrowUp' || e.code === 'Space') {
-                if (player.grounded) {
-                    player.vy = player.jumpForce;
-                    player.grounded = false;
-                }
-            }
-            if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'KeyK') {
-                shootWaterGun();
-            }
-        });
-
-        window.addEventListener('keyup', e => {
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
-            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
-        });
-
-        function shootWaterGun() {
-            if (!player.waterGunActive) return;
-            gunShootAudio.currentTime = 0;
-            gunShootAudio.play().catch(() => {});
-            projectiles.push({
-                x: player.x + (player.facing === 1 ? player.w : 0),
-                y: player.y + player.h / 2,
-                vx: player.facing * 12
-            });
-        }
-
-        document.getElementById('btn-left').addEventListener('touchstart', () => { keys.left = true; });
-        document.getElementById('btn-left').addEventListener('touchend', () => { keys.left = false; });
-        document.getElementById('btn-right').addEventListener('touchstart', () => { keys.right = true; });
-        document.getElementById('btn-right').addEventListener('touchend', () => { keys.right = false; });
-        document.getElementById('btn-jump').addEventListener('click', () => {
-            if (player.grounded) { player.vy = player.jumpForce; player.grounded = false; }
-        });
-        document.getElementById('btn-shoot').addEventListener('click', () => { shootWaterGun(); });
-
-        document.getElementById('audio-unlock-btn').addEventListener('click', () => {
-            document.getElementById('audio-unlock-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-            titleAudio.play().catch(() => {});
-        });
-
-        document.getElementById('start-btn').addEventListener('click', () => {
-            screamAudio.play().catch(() => {});
-            document.getElementById('start-screen').classList.add('hidden');
-            gameState.isActive = true;
-            lastTimerTick = Date.now();
-            initStage(1);
-        });
-
-        document.getElementById('restart-btn').addEventListener('click', () => {
-            document.getElementById('gameover-screen').classList.add('hidden');
-            gameState.lives = 3;
-            document.getElementById('lives-display').innerText = gameState.lives;
-            gameState.isActive = true;
-            lastTimerTick = Date.now();
-            initStage(gameState.stage);
-        });
-
-        document.getElementById('next-btn').addEventListener('click', () => {
-            document.getElementById('clear-screen').classList.add('hidden');
-            gameState.stage++;
-            if (gameState.stage > 30) gameState.stage = 30;
-            pipeAudio.play().catch(() => {});
-            screamAudio.play().catch(() => {});
-            gameState.isActive = true;
-            lastTimerTick = Date.now();
-            initStage(gameState.stage);
-        });
-
-        document.getElementById('stage15-next-btn').addEventListener('click', () => {
-            document.getElementById('stage15-special-screen').classList.add('hidden');
-            gameState.stage++;
-            pipeAudio.play().catch(() => {});
-            screamAudio.play().catch(() => {});
-            gameState.isActive = true;
-            lastTimerTick = Date.now();
-            initStage(gameState.stage);
-        });
-
-        document.getElementById('end-restart-btn').addEventListener('click', () => {
-            document.getElementById('ending-screen').classList.add('hidden');
-            gameState.stage = 1;
-            gameState.score = 0;
-            gameState.lives = 3;
-            gameState.isActive = true;
-            lastTimerTick = Date.now();
-            initStage(1);
-        });
-
-        document.getElementById('language-select').addEventListener('change', (e) => {
-            currentLang = e.target.value;
-            updateTexts();
-        });
-
-        updateTexts();
         requestAnimationFrame(gameLoop);
     </script>
 </body>
