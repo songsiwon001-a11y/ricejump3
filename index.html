@@ -7,11 +7,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        * { font-family: 'Press Start 2P', monospace !important; user-select: none; -webkit-user-select: none; }
-        .retro-text { text-shadow: 3px 3px 0px #000; }
-        .retro-btn { box-shadow: 0 4px 0 #1b1b1b; transition: all 0.05s ease; }
-        .retro-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1b1b1b; }
-        canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: -moz-crisp-edges; }
+        * {
+            font-family: 'Press Start 2P', monospace !important;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .retro-text {
+            text-shadow: 3px 3px 0px #000;
+        }
+        .retro-btn {
+            box-shadow: 0 4px 0 #1b1b1b;
+            transition: all 0.05s ease;
+        }
+        .retro-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #1b1b1b;
+        }
+        canvas {
+            display: block;
+            background: #87CEEB;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            image-rendering: -moz-crisp-edges;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white overflow-hidden m-0 p-0 w-screen h-screen flex flex-col items-center justify-center">
@@ -32,9 +50,11 @@
     <audio id="die-audio" src="die.wav"></audio>
     <audio id="gameover-audio" src="GAME_OVER.mp3"></audio>
     <audio id="pause-audio" src="pause.mp3"></audio>
+    <audio id="back-audio" src="back.mp3" loop></audio>
+    <audio id="win-audio" src="win!.mp3"></audio>
 
     <div id="game-container" class="relative w-full max-w-4xl h-[600px] bg-sky-400 border-4 border-black overflow-hidden shadow-2xl flex flex-col">
-        <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-xs md:text-sm font-bold text-yellow-300 hidden">
+        <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-[10px] md:text-xs font-bold text-yellow-300 hidden">
             <div>STAGE: <span id="ui-stage">1</span></div>
             <div>SCORE: <span id="ui-score">0</span></div>
             <div>LIVES: <span id="ui-lives">3</span></div>
@@ -45,7 +65,7 @@
 
         <div id="pause-screen" class="absolute inset-0 bg-black/80 hidden flex flex-col items-center justify-center text-center p-6 z-30 cursor-pointer">
             <h2 class="text-3xl md:text-5xl text-yellow-400 mb-4 retro-text animate-pulse">PAUSE</h2>
-            <p class="text-xs text-gray-300">엔터를 누르거나 화면을 터치하여 계속하세요</p>
+            <p class="text-[10px] text-gray-300">엔터를 누르거나 화면을 터치하여 계속하세요</p>
         </div>
 
         <div id="audio-unlock-screen" class="absolute inset-0 bg-black flex flex-col items-center justify-center text-center p-6 z-30">
@@ -61,25 +81,25 @@
 
         <div id="title-screen" class="absolute inset-0 bg-sky-900 hidden flex flex-col items-center justify-center text-center p-6 z-20">
             <h1 class="text-2xl md:text-4xl text-yellow-400 mb-6 retro-text animate-bounce">RICE JUMP! 3</h1>
-            <p class="text-xs text-gray-200 mb-8 leading-relaxed">최고의 밥솥 마스터가 되기 위한 모험을 시작하세요!</p>
+            <p class="text-[10px] text-gray-200 mb-8 leading-relaxed">최고의 밥솥 마스터가 되기 위한 모험을 시작하세요!</p>
             <button id="start-game-btn" class="retro-btn px-8 py-4 bg-yellow-400 text-black font-bold rounded-lg border-2 border-white text-xs cursor-pointer">GAME START!</button>
         </div>
 
         <div id="gameover-screen" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-20">
             <h2 class="text-2xl md:text-4xl text-red-500 mb-4 retro-text">GAME OVER</h2>
-            <p class="text-gray-300 mb-6 text-xs">밥이 타버렸습니다!</p>
-            <button id="restart-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white text-xs cursor-pointer">다시 도전하기</button>
+            <p class="text-gray-300 mb-6 text-[10px]">밥이 타버렸습니다!</p>
+            <button id="restart-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white text-xs cursor-pointer">이어서 재도전하기</button>
         </div>
 
         <div id="clear-screen" class="absolute inset-0 bg-black/90 hidden flex flex-col items-center justify-center text-center p-6 z-20">
             <h2 id="clear-title" class="text-2xl md:text-4xl text-emerald-400 mb-4 retro-text">STAGE CLEAR!</h2>
-            <p id="clear-msg" class="text-gray-200 mb-6 text-xs">훌륭합니다! 다음 단계로 전진하세요.</p>
+            <p id="clear-msg" class="text-gray-200 mb-6 text-[10px]">훌륭합니다! 다음 단계로 전진하세요.</p>
             <button id="next-stage-btn" class="retro-btn px-6 py-3 bg-emerald-500 text-black font-bold rounded border-2 border-white text-xs cursor-pointer">다음 스테이지</button>
         </div>
 
         <div id="ending-screen" class="absolute inset-0 bg-yellow-900/95 hidden flex flex-col items-center justify-center text-center p-6 z-20">
             <h2 class="text-2xl md:text-4xl text-yellow-300 mb-4 retro-text">CONGRATULATIONS!</h2>
-            <p class="text-white mb-6 text-xs leading-relaxed">당신은 모든 30개 스테이지를 클리어하고 최고의 밥솥 마스터가 되었습니다!</p>
+            <p class="text-white mb-6 text-[10px] leading-relaxed">당신은 모든 30개 스테이지를 클리어하고 최고의 밥솥 마스터가 되었습니다!</p>
             <button id="ending-restart-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white text-xs cursor-pointer">처음부터 다시하기</button>
         </div>
 
@@ -88,7 +108,7 @@
                 <span class="text-3xl">😴</span>
                 <span class="absolute -top-2 right-2 text-[10px] text-blue-300 animate-pulse">Z z z...</span>
             </div>
-            <h2 class="text-lg md:text-xl text-yellow-300 mb-4 retro-text leading-relaxed">헉! 벌써 반이나 오셨네요! 축하합니다!</h2>
+            <h2 class="text-base md:text-lg text-yellow-300 mb-4 retro-text leading-relaxed">헉! 벌써 반이나 오셨네요! 축하합니다!</h2>
             <button id="stage15-special-btn" class="retro-btn px-6 py-3 bg-yellow-400 text-black font-bold rounded border-2 border-white text-xs cursor-pointer">후반부 스테이지로 출발!</button>
         </div>
 
@@ -98,7 +118,7 @@
                 <span class="absolute -top-4 right-4 text-xs text-cyan-300 animate-bounce">Z z z</span>
             </div>
             <h2 id="downtime-title" class="text-xl md:text-2xl text-yellow-400 mb-4 retro-text">DOWN TIME</h2>
-            <p id="downtime-msg" class="text-gray-200 mb-6 text-xs max-w-md leading-relaxed">지금은 다운타임 시간입니다.</p>
+            <p id="downtime-msg" class="text-gray-200 mb-6 text-[10px] max-w-md leading-relaxed">지금은 다운타임 시간입니다.</p>
             <button id="downtime-ok-btn" class="retro-btn px-6 py-3 bg-blue-500 text-white font-bold rounded border-2 border-white text-xs cursor-pointer hidden">확인</button>
         </div>
 
@@ -112,6 +132,10 @@
                 <button id="btn-jump" class="w-12 h-12 bg-yellow-500 active:bg-yellow-700 text-black rounded-full border-2 border-white text-[9px] font-bold">JUMP</button>
             </div>
         </div>
+    </div>
+
+    <div class="mt-2 text-[9px] md:text-[10px] text-gray-400 tracking-wider text-center">
+        super rice jamjam studio
     </div>
 
     <script>
@@ -131,7 +155,7 @@
         const audioIds = [
             'bgm-title', 'bgm-stage', 'bgm-underground', 'bgm-water', 'bgm-snow', 'bgm-invincible',
             'scream-audio', 'rice-audio', 'stage-clear-audio', 'congrats-audio', 'notification-audio',
-            'downtime-audio', 'gun-audio', 'die-audio', 'gameover-audio', 'pause-audio'
+            'downtime-audio', 'gun-audio', 'die-audio', 'gameover-audio', 'pause-audio', 'back-audio', 'win-audio'
         ];
 
         function initWebAudio() {
@@ -257,6 +281,7 @@
                 isDowntimeMode = true;
                 isTenMinLockMode = false;
                 stopAllBgm();
+                stopAudio('back-audio');
                 gameState.isActive = false;
 
                 document.getElementById('audio-unlock-screen').classList.add('hidden');
@@ -293,6 +318,7 @@
                 if (!isTenMinLockMode) {
                     isTenMinLockMode = true;
                     stopAllBgm();
+                    stopAudio('back-audio');
                     gameState.isActive = false;
                     if (audioElements['downtime-audio'] && audioElements['downtime-audio'].paused) {
                         playAudio('downtime-audio', true);
@@ -360,6 +386,7 @@
             const pauseScreen = document.getElementById('pause-screen');
             if (gameState.isPaused) {
                 playAudio('pause-audio', false);
+                stopAudio('back-audio');
                 pauseScreen.classList.remove('hidden');
             } else {
                 pauseScreen.classList.add('hidden');
@@ -372,9 +399,14 @@
                 togglePause();
                 return;
             }
-            if (gameState.isPaused) return;
+            if (gameState.isPaused || !gameState.isActive) return;
 
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
+                if (!keys.left) {
+                    keys.left = true;
+                    playAudio('back-audio', true);
+                }
+            }
             if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
             if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
                 if (!keys.jump) jumpPlayer();
@@ -384,14 +416,17 @@
         });
 
         window.addEventListener('keyup', e => {
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
+                keys.left = false;
+                stopAudio('back-audio');
+            }
             if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
             if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keys.jump = false;
         });
 
         canvas.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (gameState.isActive && !gameState.isPaused) {
+            if (gameState.isActive) {
                 togglePause();
             }
         });
@@ -403,8 +438,18 @@
             }
         });
 
-        document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.stopPropagation(); keys.left = true; });
-        document.getElementById('btn-left').addEventListener('touchend', (e) => { e.stopPropagation(); keys.left = false; });
+        document.getElementById('btn-left').addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            if (!keys.left && gameState.isActive && !gameState.isPaused) {
+                keys.left = true;
+                playAudio('back-audio', true);
+            }
+        });
+        document.getElementById('btn-left').addEventListener('touchend', (e) => {
+            e.stopPropagation();
+            keys.left = false;
+            stopAudio('back-audio');
+        });
         document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.stopPropagation(); keys.right = true; });
         document.getElementById('btn-right').addEventListener('touchend', (e) => { e.stopPropagation(); keys.right = false; });
         document.getElementById('btn-jump').addEventListener('click', (e) => { e.stopPropagation(); jumpPlayer(); });
@@ -468,6 +513,9 @@
             projectiles = [];
             riceCookerItems = [];
             boss = null;
+            keys.left = false;
+            keys.right = false;
+            stopAudio('back-audio');
 
             platforms = [];
             mysteryBlocks = [];
@@ -523,6 +571,13 @@
             if (!player.invincible) {
                 playCurrentBgm();
             }
+        }
+
+        function triggerRiceEffect() {
+            playAudio('pause-audio', false);
+            gameState.score += 500;
+            enemies.forEach(en => en.alive = false);
+            activateInvincibleMode();
         }
 
         function activateInvincibleMode() {
@@ -581,8 +636,7 @@
                     player.vy = 2;
                     if (!mb.hit) {
                         mb.hit = true;
-                        activateInvincibleMode();
-                        gameState.score += 200;
+                        triggerRiceEffect();
                     }
                 }
             });
@@ -592,8 +646,7 @@
                     player.x + player.w > rc.x && player.x < rc.x + rc.w &&
                     player.y + player.h > rc.y && player.y < rc.y + rc.h) {
                     rc.collected = true;
-                    activateInvincibleMode();
-                    gameState.score += 500;
+                    triggerRiceEffect();
                 }
             });
 
@@ -626,6 +679,17 @@
 
             projectiles.forEach((proj, idx) => {
                 proj.x += proj.vx;
+
+                enemies.forEach(en => {
+                    if (en.alive &&
+                        proj.x + proj.w > en.x && proj.x < en.x + en.w &&
+                        proj.y + proj.h > en.y && proj.y < en.y + en.h) {
+                        en.alive = false;
+                        gameState.score += 100;
+                        projectiles.splice(idx, 1);
+                    }
+                });
+
                 if (boss && boss.alive &&
                     proj.x + proj.w > boss.x && proj.x < boss.x + boss.w &&
                     proj.y + proj.h > boss.y && proj.y < boss.y + boss.h) {
@@ -634,6 +698,7 @@
                     if (boss.hp <= 0) {
                         boss.alive = false;
                         gameState.score += 2000;
+                        playAudio('win-audio', false);
                     }
                 }
             });
@@ -666,6 +731,7 @@
         function playerDie() {
             if (player.invincible) return;
             gameState.lives--;
+            stopAudio('back-audio');
             playAudio('die-audio', false);
             if (gameState.lives <= 0) {
                 gameState.isActive = false;
@@ -681,6 +747,7 @@
 
         function triggerStageClear() {
             gameState.isActive = false;
+            stopAudio('back-audio');
             if (!player.invincible) {
                 stopAllBgm();
             }
@@ -727,8 +794,7 @@
         document.getElementById('restart-btn').addEventListener('click', () => {
             document.getElementById('gameover-screen').classList.add('hidden');
             gameState.lives = 3;
-            gameState.score = 0;
-            initStage(1);
+            initStage(gameState.stage);
             gameState.isActive = true;
             gameState.isPaused = false;
             lastTimerTick = Date.now();
