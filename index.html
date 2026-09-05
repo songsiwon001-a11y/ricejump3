@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Rice Jump! 3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -11,6 +11,7 @@
             font-family: 'Press Start 2P', monospace !important;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
         }
         .retro-text { text-shadow: 3px 3px 0px #000; }
         .retro-btn { box-shadow: 0 4px 0 #1b1b1b; transition: all 0.05s ease; }
@@ -316,7 +317,7 @@
                 downtimeModal.classList.remove('hidden');
                 document.getElementById('downtime-sleep-anim').classList.remove('hidden');
                 document.getElementById('downtime-title').innerText = "DOWN TIME";
-                
+
                 let downtimeMessage = "";
                 if (totalMinutes >= 180 && totalMinutes < 390) {
                     downtimeMessage = "지금 이 게임에 접속하는 사람이 없어야 하는데? 뭘까요? 8시에 잠금이 풀리면 다시 오세요!";
@@ -382,12 +383,18 @@
             }
         }
 
-        window.addEventListener('keydown', e => {
-            if (e.code === 'Enter') {
-                if (document.activeElement === document.getElementById('password-input')) {
+        function handleKeyDown(e) {
+            const key = e.key ? e.key.toLowerCase() : '';
+            const code = e.code || '';
+
+            if (document.activeElement === document.getElementById('password-input')) {
+                if (code === 'Enter' || key === 'enter') {
                     checkPasswordAndStart();
-                    return;
                 }
+                return;
+            }
+
+            if (code === 'Enter' || key === 'enter') {
                 const shopModal = document.getElementById('shop-modal');
                 const confirmModal = document.getElementById('shop-confirm-modal');
                 if (!confirmModal.classList.contains('hidden')) {
@@ -404,11 +411,11 @@
 
             const shopModal = document.getElementById('shop-modal');
             if (!shopModal.classList.contains('hidden') && document.getElementById('shop-confirm-modal').classList.contains('hidden')) {
-                if (e.code === 'ArrowUp') {
+                if (code === 'ArrowUp' || key === 'arrowup') {
                     selectedShopIndex = (selectedShopIndex - 1 + shopItemsList.length) % shopItemsList.length;
                     highlightSelectedShopItem();
                     return;
-                } else if (e.code === 'ArrowDown') {
+                } else if (code === 'ArrowDown' || key === 'arrowdown') {
                     selectedShopIndex = (selectedShopIndex + 1) % shopItemsList.length;
                     highlightSelectedShopItem();
                     return;
@@ -417,21 +424,93 @@
 
             if (gameState.isPaused || !gameState.isActive) return;
 
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
-                if (!keys.left) { keys.left = true; playAudio('back-audio', true); }
+            if (code === 'ArrowLeft' || key === 'arrowleft' || key === 'a' || key === 'ㅁ') {
+                if (!keys.left) {
+                    keys.left = true;
+                    playAudio('back-audio', true);
+                }
             }
-            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
-            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+            if (code === 'ArrowRight' || key === 'arrowright' || key === 'd' || key === 'ㅇ') {
+                keys.right = true;
+            }
+            if (code === 'Space' || key === ' ' || key === 'spacebar' || code === 'ArrowUp' || key === 'arrowup' || key === 'w' || key === 'ㅈ') {
+                if (!keys.jump) jumpPlayer();
+                keys.jump = true;
+                if (e.cancelable) e.preventDefault();
+            }
+            if (code === 'KeyX' || key === 'x' || key === 'ㅌ' || code === 'KeyJ' || key === 'j' || key === 'ㅓ' || key === 'shift') {
+                shootWaterGun();
+            }
+        }
+
+        function handleKeyUp(e) {
+            const key = e.key ? e.key.toLowerCase() : '';
+            const code = e.code || '';
+
+            if (code === 'ArrowLeft' || key === 'arrowleft' || key === 'a' || key === 'ㅁ') {
+                keys.left = false;
+                stopAudio('back-audio');
+            }
+            if (code === 'ArrowRight' || key === 'arrowright' || key === 'd' || key === 'ㅇ') {
+                keys.right = false;
+            }
+            if (code === 'Space' || key === ' ' || key === 'spacebar' || code === 'ArrowUp' || key === 'arrowup' || key === 'w' || key === 'ㅈ') {
+                keys.jump = false;
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
+        function bindTouchBtn(id, onPress, onRelease) {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            const start = (e) => {
+                if (e.cancelable) e.preventDefault();
+                onPress();
+            };
+            const end = (e) => {
+                if (e.cancelable) e.preventDefault();
+                if (onRelease) onRelease();
+            };
+            btn.addEventListener('touchstart', start, { passive: false });
+            btn.addEventListener('touchend', end, { passive: false });
+            btn.addEventListener('mousedown', start);
+            btn.addEventListener('mouseup', end);
+            btn.addEventListener('mouseleave', end);
+        }
+
+        bindTouchBtn('btn-left', () => {
+            if (!keys.left && gameState.isActive && !gameState.isPaused) {
+                keys.left = true;
+                playAudio('back-audio', true);
+            }
+        }, () => {
+            keys.left = false;
+            stopAudio('back-audio');
+        });
+
+        bindTouchBtn('btn-right', () => {
+            if (gameState.isActive && !gameState.isPaused) {
+                keys.right = true;
+            }
+        }, () => {
+            keys.right = false;
+        });
+
+        bindTouchBtn('btn-jump', () => {
+            if (gameState.isActive && !gameState.isPaused) {
                 if (!keys.jump) jumpPlayer();
                 keys.jump = true;
             }
-            if (e.code === 'KeyX' || e.code === 'KeyJ' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') shootWaterGun();
+        }, () => {
+            keys.jump = false;
         });
 
-        window.addEventListener('keyup', e => {
-            if (e.code === 'ArrowLeft' || e.code === 'KeyA') { keys.left = false; stopAudio('back-audio'); }
-            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
-            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keys.jump = false;
+        bindTouchBtn('btn-shoot', () => {
+            if (gameState.isActive && !gameState.isPaused) {
+                shootWaterGun();
+            }
         });
 
         canvas.addEventListener('click', (e) => { e.stopPropagation(); if (gameState.isActive) togglePause(); });
@@ -847,6 +926,10 @@
         document.getElementById('ending-restart-btn').addEventListener('click', () => {
             document.getElementById('ending-screen').classList.add('hidden');
             gameState.score = 0; gameState.riceCount = 0; startTitleScreen(1);
+        });
+
+        document.getElementById('downtime-ok-btn').addEventListener('click', () => {
+            document.getElementById('downtime-modal').classList.add('hidden');
         });
 
         document.getElementById('stage15-special-btn').addEventListener('click', () => {
