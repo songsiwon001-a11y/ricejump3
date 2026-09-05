@@ -50,7 +50,7 @@
             <div>RICE: 🍚<span id="ui-rice">0</span></div>
             <div>LIVES: <span id="ui-lives">3</span></div>
             <div>TIME: <span id="ui-timer">100</span></div>
-            <button id="self-destruct-btn" class="bg-red-600 hover:bg-red-700 active:bg-red-900 text-white px-2 py-1 rounded border border-white text-[9px] cursor-pointer">💥 자폭</button>
+            <div id="recording-status" class="hidden text-red-500 animate-pulse font-bold">🔴 REC 1m</div>
         </div>
 
         <canvas id="gameCanvas" width="800" height="600" class="w-full h-full"></canvas>
@@ -106,7 +106,7 @@
 
         <div id="shop-modal" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-40">
             <h2 class="text-xl md:text-3xl text-yellow-400 mb-2 retro-text animate-pulse">🛒 ITEM SHOP 🛒</h2>
-            <p class="text-[9px] text-gray-300 mb-2">방향키(↑/↓) 선택 후 엔터 또는 2번 클릭으로 구매</p>
+            <p class="text-[9px] text-gray-300 mb-2">방향키(↑/↓) 선택 후 엔터 또는 클릭하여 구매</p>
             <div class="text-xs text-yellow-300 mb-4 bg-yellow-950/80 px-4 py-2 rounded border border-yellow-500 font-bold">
                 보유 쌀: 🍚 <span id="shop-rice-count">0</span>개
             </div>
@@ -122,26 +122,10 @@
 
                 <div data-item-id="perm_self_destruct_immune" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
                     <div class="text-left">
-                        <div class="text-[10px] text-red-400 font-bold">🛡️ 자폭버튼 영원히 무효</div>
-                        <div class="text-[8px] text-gray-300">자폭 버튼이 영원히 작동하지 않음</div>
+                        <div class="text-[10px] text-red-400 font-bold">🛡️ 무적 방어막</div>
+                        <div class="text-[8px] text-gray-300">피해를 막아주는 강력한 실드 제공</div>
                     </div>
                     <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 50개</div>
-                </div>
-
-                <div data-item-id="shield_3" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
-                    <div class="text-left">
-                        <div class="text-[10px] text-cyan-400 font-bold">🛡️ 자폭버튼 3회 방어</div>
-                        <div class="text-[8px] text-gray-300">자폭 시도를 총 3회 차단 및 방어</div>
-                    </div>
-                    <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 30개</div>
-                </div>
-
-                <div data-item-id="shield_1" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
-                    <div class="text-left">
-                        <div class="text-[10px] text-blue-400 font-bold">🛡️ 자폭버튼 1회 방어</div>
-                        <div class="text-[8px] text-gray-300">자폭 시도를 1회 차단 및 방어</div>
-                    </div>
-                    <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 10개</div>
                 </div>
 
                 <div data-item-id="score_50" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
@@ -159,7 +143,7 @@
         <div id="shop-confirm-modal" class="absolute inset-0 bg-black/95 hidden flex flex-col items-center justify-center text-center p-6 z-50">
             <h3 class="text-lg md:text-xl text-yellow-400 mb-4 retro-text">아이템 구매 확인</h3>
             <p id="shop-confirm-msg" class="text-gray-200 mb-6 text-[10px] max-w-md leading-relaxed">
-                이 아이템을 구매하시겠습니까?<br>아이템을 구매하면 쌀이 없어집니다.
+                이 아이템을 구매하시겠습니까?<br>아이템을 구매하면 쌀이 차감됩니다.
             </p>
             <div class="flex gap-4">
                 <button id="confirm-cancel-btn" class="retro-btn px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded border-2 border-white text-xs cursor-pointer">취소</button>
@@ -228,27 +212,115 @@
         let player = {
             x: 100, y: 350, w: 42, h: 56, vx: 0, vy: 0, speed: 5, normalSpeed: 5, jumpForce: -12,
             grounded: false, facing: 1, waterGunActive: true, invincible: false, invincibleTimer: null,
-            permanentInvincible: false, superSpeed: false, superSpeedTimer: null,
-            permSelfDestructImmune: false, selfDestructShields: 0
+            permanentInvincible: false, superSpeed: false, superSpeedTimer: null
         };
 
         let keys = { left: false, right: false, jump: false };
-        let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], riceParticles = [];
+        let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], cameraItems = [], riceParticles = [];
         let boss = null, goalSwitch = { x: 0, y: 0, w: 40, h: 48, pressed: false }, snowMan = { x: 0, y: 0, w: 48, h: 64, found: false };
         let cameraX = 0, lastTimerTick = Date.now(), isDowntimeMode = false, isTenMinLockMode = false;
-        let shopItemsList = ['perm_invincible', 'perm_self_destruct_immune', 'shield_3', 'shield_1', 'score_50'];
+        let shopItemsList = ['perm_invincible', 'perm_self_destruct_immune', 'score_50'];
         let selectedShopIndex = 0, activeConfirmItem = null;
+
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let audioCtx = null;
+        let audioDest = null;
+        let audioSources = {};
 
         const audioElements = {};
         document.querySelectorAll('audio').forEach(el => audioElements[el.id] = el);
 
+        function setupAudioRecording() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioDest = audioCtx.createMediaStreamDestination();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            Object.keys(audioElements).forEach(id => {
+                const audio = audioElements[id];
+                if (!audioSources[id] && audioCtx) {
+                    try {
+                        const source = audioCtx.createMediaElementSource(audio);
+                        source.connect(audioCtx.destination);
+                        source.connect(audioDest);
+                        audioSources[id] = source;
+                    } catch(e) {}
+                }
+            });
+        }
+
+        function triggerCameraItemEffect() {
+            setupAudioRecording();
+            gameState.score += 500;
+            updateUiBar();
+
+            try {
+                const canvasStream = canvas.captureStream(30);
+                let combinedTracks = [...canvasStream.getVideoTracks()];
+
+                if (audioDest && audioDest.stream.getAudioTracks().length > 0) {
+                    combinedTracks.push(...audioDest.stream.getAudioTracks());
+                }
+
+                const combinedStream = new MediaStream(combinedTracks);
+                recordedChunks = [];
+
+                let options = { mimeType: 'video/webm' };
+                if (MediaRecorder.isTypeSupported('video/mp4')) {
+                    options = { mimeType: 'video/mp4' };
+                } else if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1')) {
+                    options = { mimeType: 'video/mp4;codecs=avc1' };
+                }
+
+                mediaRecorder = new MediaRecorder(combinedStream, options);
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    document.getElementById('recording-status').classList.add('hidden');
+                    const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'video/mp4' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `Rice_Jump_GamePlay_${Date.now()}.mp4`;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                };
+
+                mediaRecorder.start();
+                document.getElementById('recording-status').classList.remove('hidden');
+                showNoticePopup("📷 카메라 아이템 획득!\n1분간 화면과 소리가 녹화되어 MP4로 자동 다운로드됩니다.");
+
+                setTimeout(() => {
+                    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                        mediaRecorder.stop();
+                    }
+                }, 60000);
+
+            } catch (err) {
+                showNoticePopup("📷 화면 녹화 기능이 시작되었습니다!");
+            }
+        }
+
         function initWebAudio() {
+            setupAudioRecording();
             Object.values(audioElements).forEach(a => {
                 a.play().then(() => { if (a.id !== 'bgm-title') a.pause(); }).catch(() => {});
             });
         }
 
         function playAudio(id, loop = false) {
+            setupAudioRecording();
             const audio = audioElements[id];
             if (!audio) return;
             audio.loop = loop;
@@ -516,23 +588,6 @@
         canvas.addEventListener('click', (e) => { e.stopPropagation(); if (gameState.isActive) togglePause(); });
         document.getElementById('pause-screen').addEventListener('click', (e) => { e.stopPropagation(); if (gameState.isActive && gameState.isPaused) togglePause(); });
 
-        document.getElementById('self-destruct-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (gameState.isActive && !gameState.isPaused) {
-                if (player.permSelfDestructImmune) {
-                    showNoticePopup("자폭 버튼이 영원히 무효화되었습니다!");
-                    return;
-                }
-                if (player.selfDestructShields > 0) {
-                    player.selfDestructShields--;
-                    showNoticePopup(`자폭 방어 작동! (남은 방어: ${player.selfDestructShields}회)`);
-                    return;
-                }
-                gameState.lives = 0;
-                playerDie();
-            }
-        });
-
         function startTitleScreen(startStage = 1) {
             initWebAudio();
             gameState.stage = startStage;
@@ -591,7 +646,7 @@
             gameState.timer = 100;
             player.x = 80; player.y = 300; player.vx = 0; player.vy = 0;
             cameraX = 0;
-            projectiles = []; riceGrains = []; riceCookerItems = []; flipperItems = []; riceParticles = [];
+            projectiles = []; riceGrains = []; riceCookerItems = []; flipperItems = []; cameraItems = []; riceParticles = [];
             boss = null; keys.left = false; keys.right = false; stopAudio('back-audio');
 
             player.speed = player.normalSpeed || 5;
@@ -615,20 +670,25 @@
                     enemies.push({ x: currentX + 60, y: groundY - 40, w: 36, h: 36, vx: 1.5, minX: currentX + 30, maxX: currentX + platWidth - 60, alive: true, frozenTimer: 0 });
                 }
 
-                if (Math.random() < 0.5 && currentX > 200) {
+                let itemRnd = Math.random();
+                if (itemRnd < 0.35 && currentX > 200) {
                     riceGrains.push({ x: currentX + 70, y: groundY - 100, w: 24, h: 24, collected: false });
-                } else if (Math.random() < 0.5 && currentX > 200) {
+                } else if (itemRnd < 0.6 && currentX > 200) {
                     riceCookerItems.push({ x: currentX + 110, y: groundY - 120, w: 40, h: 40, collected: false });
+                } else if (itemRnd < 0.8 && currentX > 200) {
+                    cameraItems.push({ x: currentX + 150, y: groundY - 100, w: 32, h: 32, collected: false });
                 }
 
                 if (stageNum >= 14 && stageNum <= 18 && Math.random() < 0.5 && currentX > 200) {
-                    flipperItems.push({ x: currentX + 160, y: groundY - 110, w: 32, h: 32, collected: false });
+                    flipperItems.push({ x: currentX + 180, y: groundY - 110, w: 32, h: 32, collected: false });
                 }
                 currentX += platWidth + gapWidth;
             }
 
-            for (let i = 0; i < 5; i++) {
-                mysteryBlocks.push({ x: 500 + i * 500, y: 320 - (i % 2) * 50, w: 40, h: 40, hit: false, item: i % 2 === 0 ? 'grain' : 'cooker' });
+            const itemTypes = ['grain', 'cooker', 'camera'];
+            for (let i = 0; i < 6; i++) {
+                let type = itemTypes[i % itemTypes.length];
+                mysteryBlocks.push({ x: 450 + i * 450, y: 320 - (i % 2) * 50, w: 40, h: 40, hit: false, item: type });
             }
 
             if (stageNum % 5 === 0) {
@@ -707,7 +767,8 @@
                     if (!mb.hit) {
                         mb.hit = true;
                         if (mb.item === 'grain') triggerRiceGrainEffect(mb.x + mb.w / 2, mb.y);
-                        else triggerRiceCookerEffect();
+                        else if (mb.item === 'cooker') triggerRiceCookerEffect();
+                        else if (mb.item === 'camera') triggerCameraItemEffect();
                     }
                 }
             });
@@ -727,6 +788,12 @@
             flipperItems.forEach(fi => {
                 if (!fi.collected && player.x + player.w > fi.x && player.x < fi.x + fi.w && player.y + player.h > fi.y && player.y < fi.y + fi.h) {
                     fi.collected = true; triggerFlipperEffect();
+                }
+            });
+
+            cameraItems.forEach(cam => {
+                if (!cam.collected && player.x + player.w > cam.x && player.x < cam.x + cam.w && player.y + player.h > cam.y && player.y < cam.y + cam.h) {
+                    cam.collected = true; triggerCameraItemEffect();
                 }
             });
 
@@ -873,8 +940,6 @@
             let price = 0;
             if (itemId === 'perm_invincible') price = 100;
             else if (itemId === 'perm_self_destruct_immune') price = 50;
-            else if (itemId === 'shield_3') price = 30;
-            else if (itemId === 'shield_1') price = 10;
             else if (itemId === 'score_50') price = 5;
 
             if (gameState.riceCount < price) {
@@ -885,9 +950,6 @@
 
             gameState.riceCount -= price;
             if (itemId === 'perm_invincible') { player.permanentInvincible = true; player.invincible = true; }
-            else if (itemId === 'perm_self_destruct_immune') player.permSelfDestructImmune = true;
-            else if (itemId === 'shield_3') player.selfDestructShields += 3;
-            else if (itemId === 'shield_1') player.selfDestructShields += 1;
             else if (itemId === 'score_50') gameState.score += 50;
 
             playAudio('gun-audio', false);
@@ -956,6 +1018,11 @@
             mysteryBlocks.forEach(mb => {
                 ctx.fillStyle = mb.hit ? "#7f8c8d" : "#f1c40f";
                 ctx.fillRect(mb.x, mb.y, mb.w, mb.h);
+                if (!mb.hit) {
+                    ctx.fillStyle = "#000";
+                    ctx.font = "16px monospace";
+                    ctx.fillText("?", mb.x + 14, mb.y + 26);
+                }
             });
 
             riceGrains.forEach(rg => {
@@ -968,6 +1035,13 @@
 
             flipperItems.forEach(fi => {
                 if (!fi.collected) { ctx.fillStyle = "#00cec9"; ctx.fillRect(fi.x, fi.y, fi.w, fi.h); }
+            });
+
+            cameraItems.forEach(cam => {
+                if (!cam.collected) {
+                    ctx.fillStyle = "#34495e"; ctx.fillRect(cam.x, cam.y, cam.w, cam.h);
+                    ctx.fillStyle = "#ffffff"; ctx.font = "16px monospace"; ctx.fillText("📷", cam.x + 4, cam.y + 22);
+                }
             });
 
             enemies.forEach(en => {
