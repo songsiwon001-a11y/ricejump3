@@ -42,6 +42,7 @@
     <audio id="back-audio" src="back.mp3" loop></audio>
     <audio id="win-audio" src="win.mp3"></audio>
     <audio id="beep-audio" src="beep3.wav"></audio>
+    <audio id="ending-audio" src="ending.mp3" loop></audio>
 
     <div id="game-container" class="relative w-full max-w-4xl h-[600px] bg-sky-400 border-4 border-black overflow-hidden shadow-2xl flex flex-col">
         <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-[10px] md:text-xs font-bold text-yellow-300 hidden">
@@ -334,7 +335,7 @@
         }
 
         function stopAllBgm() {
-            ['bgm-title', 'bgm-stage', 'bgm-underground', 'bgm-water', 'bgm-snow', 'bgm-boss', 'bgm-invincible', 'bgm-shop'].forEach(stopAudio);
+            ['bgm-title', 'bgm-stage', 'bgm-underground', 'bgm-water', 'bgm-snow', 'bgm-boss', 'bgm-invincible', 'bgm-shop', 'ending-audio'].forEach(stopAudio);
         }
 
         function setAudioSpeedAndPitch(id, rate) {
@@ -945,11 +946,15 @@
                 return;
             }
 
-            playAudio('stage-clear-audio', false);
-
             if (gameState.stage >= 30) {
-                document.getElementById('ending-screen').classList.remove('hidden');
+                playAudio('stage-clear-audio', false);
+                setTimeout(() => {
+                    stopAllBgm();
+                    playAudio('ending-audio', true);
+                    document.getElementById('ending-screen').classList.remove('hidden');
+                }, 1000);
             } else {
+                playAudio('stage-clear-audio', false);
                 const clearScreen = document.getElementById('clear-screen');
                 const pwDisplayBox = document.getElementById('pw-display-box');
                 const nextPwEl = document.getElementById('next-stage-pw');
@@ -1053,6 +1058,7 @@
         });
 
         document.getElementById('ending-restart-btn').addEventListener('click', () => {
+            stopAudio('ending-audio');
             document.getElementById('ending-screen').classList.add('hidden');
             gameState.score = 0; gameState.riceCount = 0; startTitleScreen(1);
         });
