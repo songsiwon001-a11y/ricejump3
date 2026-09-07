@@ -117,7 +117,7 @@
                 <div data-item-id="perm_invincible" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
                     <div class="text-left">
                         <div class="text-[10px] text-amber-400 font-bold">✨ 영원 무적 밥솥</div>
-                        <div class="text-[8px] text-gray-300">게임 종료까지 영구 무적 상태 유지</div>
+                        <div class="text-[8px] text-gray-300">게임 종료까지 영구 무적 상태 유지 (낙하 제외)</div>
                     </div>
                     <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 100개</div>
                 </div>
@@ -301,7 +301,6 @@
 
                 mediaRecorder.start();
                 document.getElementById('recording-status').classList.remove('hidden');
-                showNoticePopup("📷 카메라 아이템 획득!\n1분간 화면과 소리가 녹화되어 MP4로 자동 다운로드됩니다.");
 
                 setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -310,7 +309,7 @@
                 }, 60000);
 
             } catch (err) {
-                showNoticePopup("📷 화면 녹화 기능이 시작되었습니다!");
+                console.error("Recording error:", err);
             }
         }
 
@@ -759,7 +758,7 @@
             if (Date.now() - lastTimerTick >= 1000) {
                 gameState.timer--;
                 lastTimerTick = Date.now();
-                if (gameState.timer <= 0) playerDie();
+                if (gameState.timer <= 0) playerDie(false);
                 updateBgmSpeed();
             }
 
@@ -818,7 +817,10 @@
                 if (pt.life <= 0) riceParticles.splice(i, 1);
             }
 
-            if (player.y > canvas.height + 100) playerDie();
+            // 낙하 판정: 캔버스 높이 밑으로 떨어질 때 낙사 처리 (isFall = true)
+            if (player.y > canvas.height + 100) {
+                playerDie(true);
+            }
 
             enemies = enemies.filter(en => en.alive);
             let hitEnemy = false;
@@ -848,7 +850,7 @@
                 player.vy = -10;
                 playAudio('gun-audio', false);
             } else if (hitEnemy) {
-                playerDie();
+                playerDie(false);
             }
 
             enemies = enemies.filter(en => en.alive);
@@ -869,7 +871,7 @@
                         playAudio('gun-audio', false);
                         if (boss.hp <= 0) { boss.alive = false; gameState.score += 2000; playAudio('win-audio', false); }
                     } else {
-                        playerDie();
+                        playerDie(false);
                     }
                 }
             }
@@ -922,20 +924,26 @@
             updateUiBar();
         }
 
-        function playerDie() {
-            if (player.invincible) return;
-            if (player.hasShield) {
-                player.hasShield = false;
-                player.invincible = true;
-                setTimeout(() => { if (!player.permanentInvincible) player.invincible = false; }, 2000);
-                return;
+        function playerDie(isFall = false) {
+            // 낙하(isFall) 상황이 아니고 일반 공격을 받았을 때만 무적/실드가 피해를 방어함.
+            if (!isFall) {
+                if (player.invincible) return;
+                if (player.hasShield) {
+                    player.hasShield = false;
+                    player.invincible = true;
+                    setTimeout(() => { if (!player.permanentInvincible) player.invincible = false; }, 2000);
+                    return;
+                }
             }
+
             gameState.lives--; stopAudio('back-audio'); playAudio('die-audio', false);
             if (gameState.lives <= 0) {
                 gameState.isActive = false; stopAllBgm(); playAudio('gameover-audio', false);
                 document.getElementById('gameover-screen').classList.remove('hidden');
             } else {
-                player.x = 80; player.y = 200; player.vy = 0;
+                // 낙하 또는 사망 후 시작 위치로 리스폰
+                player.x = 80; player.y = 200; player.vx = 0; player.vy = 0;
+                cameraX = 0;
             }
         }
 
