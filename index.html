@@ -36,6 +36,7 @@
     <audio id="notification-audio" src="notification.mp3"></audio>
     <audio id="downtime-audio" src="downtime.mp3" loop></audio>
     <audio id="gun-audio" src="gun_shoot!.mp3"></audio>
+    <audio id="jump-audio" src="jump.wav"></audio>
     <audio id="die-audio" src="die.wav"></audio>
     <audio id="gameover-audio" src="GAME_OVER.mp3"></audio>
     <audio id="pause-audio" src="pause.mp3"></audio>
@@ -637,7 +638,11 @@
 
         function jumpPlayer() {
             if (!gameState.isActive || gameState.isPaused) return;
-            if (player.grounded) { player.vy = player.jumpForce; player.grounded = false; }
+            if (player.grounded) {
+                player.vy = player.jumpForce;
+                player.grounded = false;
+                playAudio('jump-audio', false);
+            }
         }
 
         function shootWaterGun() {
