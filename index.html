@@ -44,6 +44,9 @@
     <audio id="win-audio" src="win.mp3"></audio>
     <audio id="beep-audio" src="beep3.wav"></audio>
     <audio id="ending-audio" src="ending.mp3" loop></audio>
+    <audio id="secret-audio" src="가오니니사우니니.mp3"></audio>
+    <audio id="rice-stop-100-audio" src="밥좀그만!.mp3"></audio>
+    <audio id="rice-stop-130-audio" src="밥좀그만!(130rice).mp3"></audio>
 
     <div id="game-container" class="relative w-full max-w-4xl h-[600px] bg-sky-400 border-4 border-black overflow-hidden shadow-2xl flex flex-col">
         <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-[10px] md:text-xs font-bold text-yellow-300 hidden">
@@ -214,11 +217,12 @@
         let player = {
             x: 100, y: 350, w: 42, h: 56, vx: 0, vy: 0, speed: 5, normalSpeed: 5, jumpForce: -12,
             grounded: false, facing: 1, waterGunActive: true, invincible: false, invincibleTimer: null,
-            permanentInvincible: false, superSpeed: false, superSpeedTimer: null, hasShield: false
+            permanentInvincible: false, superSpeed: false, superSpeedTimer: null, hasShield: false,
+            sledActive: false, sledTimer: null
         };
 
         let keys = { left: false, right: false, jump: false };
-        let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], cameraItems = [], riceParticles = [];
+        let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], cameraItems = [], sledItems = [], riceParticles = [];
         let boss = null, goalSwitch = { x: 0, y: 0, w: 40, h: 48, pressed: false }, snowMan = { x: 0, y: 0, w: 48, h: 64, found: false };
         let cameraX = 0, lastTimerTick = Date.now(), isDowntimeMode = false, isTenMinLockMode = false, lastNotifiedMinute = -1;
         let shopItemsList = ['perm_invincible', 'perm_self_destruct_immune', 'score_50'];
@@ -301,7 +305,6 @@
 
                 mediaRecorder.start();
                 document.getElementById('recording-status').classList.remove('hidden');
-                showNoticePopup("📷 카메라 아이템 획득!\n1분간 화면과 소리가 녹화되어 MP4로 자동 다운로드됩니다.");
 
                 setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
@@ -309,9 +312,7 @@
                     }
                 }, 60000);
 
-            } catch (err) {
-                showNoticePopup("📷 화면 녹화 기능이 시작되었습니다!");
-            }
+            } catch (err) {}
         }
 
         function initWebAudio() {
@@ -354,10 +355,15 @@
         function updateBgmSpeed() {
             if (!gameState.isActive || gameState.isPaused) return;
             const isLowTime = gameState.timer <= 50;
+            let rate = 1.0;
+            if (isLowTime) rate *= 1.5;
+            if (player.superSpeed) rate *= 1.3;
+            if (player.sledActive) rate *= 1.25;
+
             if (player.invincible) {
-                setAudioSpeedAndPitch('bgm-invincible', isLowTime ? 2.0 : 1.0);
+                setAudioSpeedAndPitch('bgm-invincible', isLowTime ? 2.0 : (player.sledActive ? 1.25 : 1.0));
             } else {
-                setAllBgmSpeedAndPitch((isLowTime || player.superSpeed) ? 1.5 : 1.0);
+                setAllBgmSpeedAndPitch(rate);
             }
         }
 
@@ -458,8 +464,11 @@
             document.getElementById('downtime-ok-btn').classList.remove('hidden');
         }
 
-        document.getElementById('password-input').addEventListener('input', () => {
+        document.getElementById('password-input').addEventListener('input', (e) => {
             playAudio('beep-audio', false);
+            if (e.target.value.trim().toUpperCase() === 'SRJS') {
+                playAudio('secret-audio', false);
+            }
         });
 
         function togglePause() {
@@ -621,6 +630,11 @@
         function checkPasswordAndStart() {
             const inputVal = document.getElementById('password-input').value.trim().toUpperCase();
             const msgEl = document.getElementById('password-msg');
+            if (inputVal === 'SRJS') {
+                playAudio('secret-audio', false);
+                msgEl.innerText = "";
+                return;
+            }
             let matchedStage = null;
             for (let stg in stagePasswords) {
                 if (stagePasswords[stg] === inputVal) { matchedStage = parseInt(stg); break; }
@@ -671,12 +685,14 @@
             gameState.timer = 100;
             player.x = 80; player.y = 300; player.vx = 0; player.vy = 0;
             cameraX = 0;
-            projectiles = []; riceGrains = []; riceCookerItems = []; flipperItems = []; cameraItems = []; riceParticles = [];
+            projectiles = []; riceGrains = []; riceCookerItems = []; flipperItems = []; cameraItems = []; sledItems = []; riceParticles = [];
             boss = null; keys.left = false; keys.right = false; stopAudio('back-audio');
 
             player.speed = player.normalSpeed || 5;
             player.superSpeed = false;
+            player.sledActive = false;
             if (player.superSpeedTimer) clearTimeout(player.superSpeedTimer);
+            if (player.sledTimer) clearTimeout(player.sledTimer);
             if (player.permanentInvincible) player.invincible = true;
             updateBgmSpeed();
 
@@ -707,6 +723,10 @@
                 if (stageNum >= 14 && stageNum <= 18 && Math.random() < 0.5 && currentX > 200) {
                     flipperItems.push({ x: currentX + 180, y: groundY - 110, w: 32, h: 32, collected: false });
                 }
+
+                if (stageNum >= 19 && stageNum <= 30 && Math.random() < 0.6 && currentX > 200) {
+                    sledItems.push({ x: currentX + 160, y: groundY - 110, w: 36, h: 32, collected: false });
+                }
                 currentX += platWidth + gapWidth;
             }
 
@@ -727,8 +747,18 @@
         }
 
         function triggerRiceGrainEffect(x, y) {
-            playAudio('pause-audio', false);
-            gameState.score += 200; gameState.riceCount += 1; updateUiBar();
+            gameState.score += 200;
+            gameState.riceCount += 1;
+            updateUiBar();
+
+            if (gameState.riceCount > 130) {
+                playAudio('rice-stop-130-audio', false);
+            } else if (gameState.riceCount >= 100) {
+                playAudio('rice-stop-100-audio', false);
+            } else {
+                playAudio('pause-audio', false);
+            }
+
             enemies.forEach(en => { if (en.alive) en.frozenTimer = 180; });
             if (boss && boss.alive) boss.frozenTimer = 180;
 
@@ -751,6 +781,16 @@
                 player.superSpeed = false; player.speed = player.normalSpeed || 5;
                 updateBgmSpeed();
             }, 8000);
+        }
+
+        function triggerSledEffect() {
+            playAudio('gun-audio', false); gameState.score += 400;
+            player.sledActive = true; player.speed = 11; updateBgmSpeed();
+            if (player.sledTimer) clearTimeout(player.sledTimer);
+            player.sledTimer = setTimeout(() => {
+                player.sledActive = false; player.speed = player.normalSpeed || 5;
+                updateBgmSpeed();
+            }, 10000);
         }
 
         function activateInvincibleMode() {
@@ -820,6 +860,12 @@
             cameraItems.forEach(cam => {
                 if (!cam.collected && player.x + player.w > cam.x && player.x < cam.x + cam.w && player.y + player.h > cam.y && player.y < cam.y + cam.h) {
                     cam.collected = true; triggerCameraItemEffect();
+                }
+            });
+
+            sledItems.forEach(sl => {
+                if (!sl.collected && player.x + player.w > sl.x && player.x < sl.x + sl.w && player.y + player.h > sl.y && player.y < sl.y + sl.h) {
+                    sl.collected = true; triggerSledEffect();
                 }
             });
 
@@ -1133,6 +1179,14 @@
                 }
             });
 
+            sledItems.forEach(sl => {
+                if (!sl.collected) {
+                    ctx.fillStyle = "#e67e22"; ctx.fillRect(sl.x, sl.y + 16, sl.w, 8);
+                    ctx.fillStyle = "#d35400"; ctx.fillRect(sl.x + 4, sl.y, sl.w - 8, 16);
+                    ctx.fillStyle = "#ffffff"; ctx.font = "16px monospace"; ctx.fillText("🛷", sl.x + 4, sl.y + 22);
+                }
+            });
+
             enemies.forEach(en => {
                 if (en.alive) { ctx.fillStyle = en.frozenTimer > 0 ? "#74b9ff" : "#e74c3c"; ctx.fillRect(en.x, en.y, en.w, en.h); }
             });
@@ -1156,6 +1210,10 @@
 
             if (player.superSpeed) {
                 ctx.fillStyle = "rgba(0, 206, 201, 0.4)"; ctx.fillRect(player.x - player.facing * 14, player.y, player.w, player.h);
+            }
+
+            if (player.sledActive) {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.5)"; ctx.fillRect(player.x - player.facing * 18, player.y + 10, player.w, player.h - 10);
             }
 
             ctx.fillStyle = player.invincible ? "#f1c40f" : "#fffa65";
