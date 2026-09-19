@@ -50,6 +50,7 @@
     <audio id="beep-audio" src="beep3.wav"></audio>
     <audio id="ending-audio" src="ending.mp3" loop></audio>
     <audio id="secret-audio" src="가오니니사우니니.mp3"></audio>
+    <audio id="srjs-bgm-audio" src="srjs_bgm.mp3"></audio>
     <audio id="rice-stop-100-audio" src="밥좀그만!.mp3"></audio>
     <audio id="rice-stop-130-audio" src="밥좀그만!(130rice).mp3"></audio>
     <audio id="story-audio" src="story.wav" loop></audio>
@@ -503,6 +504,8 @@
             } else if (val === 'STORY') {
                 e.target.value = '';
                 openStoryModal();
+            } else if (val === 'RICE') {
+                playAudio('srjs-bgm-audio', false);
             }
         });
 
@@ -678,6 +681,10 @@
                 document.getElementById('password-input').value = '';
                 msgEl.innerText = "";
                 openStoryModal();
+                return;
+            } else if (inputVal === 'RICE') {
+                playAudio('srjs-bgm-audio', false);
+                msgEl.innerText = "";
                 return;
             }
             let matchedStage = null;
