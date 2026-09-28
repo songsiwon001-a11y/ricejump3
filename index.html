@@ -16,7 +16,7 @@
         .retro-text { text-shadow: 3px 3px 0px #000; }
         .retro-btn { box-shadow: 0 4px 0 #1b1b1b; transition: all 0.05s ease; }
         .retro-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1b1b1b; }
-canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-rendering: crisp-edges; }
+        canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-rendering: crisp-edges; }
         @keyframes floatFireworks {
             0%, 100% { transform: translateY(0px) scale(1); }
             50% { transform: translateY(-15px) scale(1.15); }
@@ -546,10 +546,12 @@ canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-
                 if (code === 'ArrowUp' || key === 'arrowup') {
                     selectedShopIndex = (selectedShopIndex - 1 + shopItemsList.length) % shopItemsList.length;
                     highlightSelectedShopItem();
+                    playAudio('beep-audio', false);
                     return;
                 } else if (code === 'ArrowDown' || key === 'arrowdown') {
                     selectedShopIndex = (selectedShopIndex + 1) % shopItemsList.length;
                     highlightSelectedShopItem();
+                    playAudio('beep-audio', false);
                     return;
                 }
             }
@@ -658,6 +660,7 @@ canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-
         }
 
         function checkPasswordAndStart() {
+            playAudio('beep-audio', false);
             const inputVal = document.getElementById('password-input').value.trim().toUpperCase();
             const msgEl = document.getElementById('password-msg');
             if (inputVal === 'SRJS') {
@@ -1096,11 +1099,13 @@ canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-
         }
 
         function openShopConfirmModal(itemId) {
+            playAudio('beep-audio', false);
             activeConfirmItem = itemId;
             document.getElementById('shop-confirm-modal').classList.remove('hidden');
         }
 
         function closeShopCompletely() {
+            playAudio('beep-audio', false);
             document.getElementById('shop-confirm-modal').classList.add('hidden');
             document.getElementById('shop-modal').classList.add('hidden');
             stopAudio('bgm-shop');
@@ -1132,6 +1137,7 @@ canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-
         }
 
         document.getElementById('open-shop-btn').addEventListener('click', () => {
+            playAudio('beep-audio', false);
             stopAllBgm(); playAudio('bgm-shop', true);
             selectedShopIndex = 0; updateShopUI();
             document.getElementById('shop-modal').classList.remove('hidden');
@@ -1145,31 +1151,36 @@ canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-
             card.addEventListener('click', () => {
                 const itemId = card.getAttribute('data-item-id');
                 if (selectedShopIndex === idx) openShopConfirmModal(itemId);
-                else { selectedShopIndex = idx; highlightSelectedShopItem(); }
+                else { selectedShopIndex = idx; highlightSelectedShopItem(); playAudio('beep-audio', false); }
             });
         });
 
         document.getElementById('next-stage-btn').addEventListener('click', () => {
+            playAudio('beep-audio', false);
             document.getElementById('clear-screen').classList.add('hidden');
             gameState.stage++; gameState.isActive = true; initStage(gameState.stage);
         });
 
         document.getElementById('restart-btn').addEventListener('click', () => {
+            playAudio('beep-audio', false);
             document.getElementById('gameover-screen').classList.add('hidden');
             gameState.lives = 3; gameState.isActive = true; initStage(gameState.stage);
         });
 
         document.getElementById('ending-restart-btn').addEventListener('click', () => {
+            playAudio('beep-audio', false);
             stopAudio('ending-audio');
             document.getElementById('ending-screen').classList.add('hidden');
             gameState.score = 0; gameState.riceCount = 0; startTitleScreen(1);
         });
 
         document.getElementById('downtime-ok-btn').addEventListener('click', () => {
+            playAudio('beep-audio', false);
             document.getElementById('downtime-modal').classList.add('hidden');
         });
 
         document.getElementById('stage15-special-btn').addEventListener('click', () => {
+            playAudio('beep-audio', false);
             document.getElementById('stage15-special-screen').classList.add('hidden');
             gameState.stage = 16; gameState.isActive = true; initStage(16);
         });
