@@ -16,7 +16,7 @@
         .retro-text { text-shadow: 3px 3px 0px #000; }
         .retro-btn { box-shadow: 0 4px 0 #1b1b1b; transition: all 0.05s ease; }
         .retro-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #1b1b1b; }
-        canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-rendering: crisp-edges; }
+canvas { display: block; background: #87CEEB; image-rendering: pixelated; image-rendering: crisp-edges; }
         @keyframes floatFireworks {
             0%, 100% { transform: translateY(0px) scale(1); }
             50% { transform: translateY(-15px) scale(1.15); }
@@ -54,6 +54,7 @@
     <audio id="rice-stop-100-audio" src="밥좀그만!.mp3"></audio>
     <audio id="rice-stop-130-audio" src="밥좀그만!(130rice).mp3"></audio>
     <audio id="story-audio" src="story.wav" loop></audio>
+    <audio id="invalid-code-audio" src="invelid_code.wav"></audio>
 
     <div id="game-container" class="relative w-full max-w-4xl h-[600px] bg-sky-400 border-4 border-black overflow-hidden shadow-2xl flex flex-col">
         <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-[10px] md:text-xs font-bold text-yellow-300 hidden">
@@ -436,7 +437,7 @@
 
             if (h >= 22 || h < 8) {
                 isDowntimeMode = true;
-                stopAllBgm(); stopAudio('back-audio'); gameState.isActive = false;
+                stopAllBgm(); stopAudio('back-audio'); stopAudio('downtime-audio'); gameState.isActive = false;
                 document.querySelectorAll('#game-container > div').forEach(el => el.classList.add('hidden'));
                 const downtimeModal = document.getElementById('downtime-modal');
                 downtimeModal.classList.remove('hidden');
@@ -456,7 +457,6 @@
 
                 document.getElementById('downtime-msg').innerHTML = downtimeMessage;
                 document.getElementById('downtime-ok-btn').classList.add('hidden');
-                playAudio('downtime-audio', true);
                 return;
             } else if (isDowntimeMode && h >= 8) {
                 isDowntimeMode = false;
@@ -495,19 +495,6 @@
         }
 
         document.getElementById('story-modal').addEventListener('click', closeStoryModal);
-
-        document.getElementById('password-input').addEventListener('input', (e) => {
-            const val = e.target.value.trim().toUpperCase();
-            playAudio('beep-audio', false);
-            if (val === 'SRJS') {
-                playAudio('secret-audio', false);
-            } else if (val === 'STORY') {
-                e.target.value = '';
-                openStoryModal();
-            } else if (val === 'RICE') {
-                playAudio('srjs-bgm-audio', false);
-            }
-        });
 
         function togglePause() {
             if (!gameState.isActive) return;
@@ -696,6 +683,7 @@
                 startTitleScreen(matchedStage);
             } else {
                 msgEl.innerText = "잘못된 비밀번호입니다!";
+                playAudio('invalid-code-audio', false);
             }
         }
 
