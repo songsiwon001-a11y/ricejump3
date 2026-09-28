@@ -369,8 +369,7 @@
         function updateBgmSpeed() {
             if (!gameState.isActive || gameState.isPaused) return;
             const isLowTime = gameState.timer <= 50;
-            let rate = 1.0;
-            if (isLowTime) rate *= 1.5;
+            let rate = isLowTime ? 1.5 : 1.0;
             if (player.superSpeed) rate *= 1.3;
             if (player.sledActive) rate *= 1.25;
 
@@ -596,6 +595,10 @@
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
 
+        document.getElementById('password-input').addEventListener('input', () => {
+            playAudio('beep-audio', false);
+        });
+
         function bindTouchBtn(id, onPress, onRelease) {
             const btn = document.getElementById(id);
             if (!btn) return;
@@ -663,6 +666,7 @@
             playAudio('beep-audio', false);
             const inputVal = document.getElementById('password-input').value.trim().toUpperCase();
             const msgEl = document.getElementById('password-msg');
+
             if (inputVal === 'SRJS') {
                 playAudio('secret-audio', false);
                 msgEl.innerText = "";
@@ -677,10 +681,12 @@
                 msgEl.innerText = "";
                 return;
             }
+
             let matchedStage = null;
             for (let stg in stagePasswords) {
                 if (stagePasswords[stg] === inputVal) { matchedStage = parseInt(stg); break; }
             }
+
             if (matchedStage) {
                 msgEl.innerText = "";
                 startTitleScreen(matchedStage);
