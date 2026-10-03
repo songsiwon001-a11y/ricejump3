@@ -218,6 +218,9 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
+        const riceCookerImg = new Image();
+        riceCookerImg.src = 'rice_cooker.png';
+
         const stagePasswords = {
             2: "RICE2", 3: "RICE3", 4: "RICE4", 5: "RICE5", 6: "RICE6",
             7: "RICE7", 8: "RICE8", 9: "RICE9", 10: "R10P", 11: "R11P",
@@ -1221,7 +1224,13 @@
             });
 
             riceCookerItems.forEach(rc => {
-                if (!rc.collected) { ctx.fillStyle = "#e74c3c"; ctx.fillRect(rc.x, rc.y, rc.w, rc.h); }
+                if (!rc.collected) {
+                    if (riceCookerImg.complete && riceCookerImg.naturalWidth !== 0) {
+                        ctx.drawImage(riceCookerImg, rc.x, rc.y, rc.w, rc.h);
+                    } else {
+                        ctx.fillStyle = "#e74c3c"; ctx.fillRect(rc.x, rc.y, rc.w, rc.h);
+                    }
+                }
             });
 
             flipperItems.forEach(fi => {
