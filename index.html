@@ -56,6 +56,7 @@
     <audio id="rice-stop-130-audio" src="밥좀그만!(130rice).mp3"></audio>
     <audio id="story-audio" src="story.wav" loop></audio>
     <audio id="invalid-code-audio" src="invelid_code.wav"></audio>
+    <audio id="midi-audio" src="time_stop_rice.mid" loop></audio>
 
     <div id="game-container" class="relative w-full max-w-4xl h-[600px] bg-sky-400 border-4 border-black overflow-hidden shadow-2xl flex flex-col">
         <div id="ui-bar" class="absolute top-0 left-0 w-full h-14 bg-black/70 px-4 flex items-center justify-between z-10 text-[10px] md:text-xs font-bold text-yellow-300 hidden">
@@ -149,10 +150,18 @@
                     <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 100개</div>
                 </div>
 
+                <div data-item-id="super_gun" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
+                    <div class="text-left">
+                        <div class="text-[10px] text-blue-400 font-bold">🔫 초고속 물총</div>
+                        <div class="text-[8px] text-gray-300">물총 투사체 발사 속도 2배 증가</div>
+                    </div>
+                    <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 75개</div>
+                </div>
+
                 <div data-item-id="perm_self_destruct_immune" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
                     <div class="text-left">
-                        <div class="text-[10px] text-red-400 font-bold">🛡️ 무적 방어막</div>
-                        <div class="text-[8px] text-gray-300">피해를 막아주는 강력한 실드 제공</div>
+                        <div class="text-[10px] text-red-400 font-bold">🛡️ 장애물 1회 보호 방패</div>
+                        <div class="text-[8px] text-gray-300">피해 피격 시 1회 보호해주는 방패</div>
                     </div>
                     <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 50개</div>
                 </div>
@@ -242,7 +251,7 @@
         let gameState = { isActive: false, isPaused: false, score: 0, stage: 1, lives: 3, timer: 100, riceCount: 0 };
         let player = {
             x: 100, y: 350, w: 42, h: 56, vx: 0, vy: 0, speed: 5, normalSpeed: 5, jumpForce: -12,
-            grounded: false, facing: 1, waterGunActive: true, invincible: false, invincibleTimer: null,
+            grounded: false, facing: 1, waterGunActive: true, bulletSpeed: 10, invincible: false, invincibleTimer: null,
             permanentInvincible: false, superSpeed: false, superSpeedTimer: null, hasShield: false,
             sledActive: false, sledTimer: null, timeStopped: false, timeStopTimer: null, permanentTimeStop: false
         };
@@ -251,7 +260,7 @@
         let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], cameraItems = [], sledItems = [], timeStopItems = [], riceParticles = [];
         let boss = null, goalSwitch = { x: 0, y: 0, w: 40, h: 48, pressed: false }, snowMan = { x: 0, y: 0, w: 48, h: 64, found: false };
         let cameraX = 0, lastTimerTick = Date.now(), isDowntimeMode = false, isTenMinLockMode = false, lastNotifiedMinute = -1;
-        let shopItemsList = ['perm_time_stop', 'perm_invincible', 'perm_self_destruct_immune', 'score_50'];
+        let shopItemsList = ['perm_time_stop', 'perm_invincible', 'super_gun', 'perm_self_destruct_immune', 'score_50'];
         let selectedShopIndex = 0, activeConfirmItem = null;
 
         let mediaRecorder = null;
@@ -259,16 +268,27 @@
         let audioCtx = null;
         let audioDest = null;
         let audioSources = {};
-        let midiMuteTimer = null;
+        let midiTimer = null;
 
         const audioElements = {};
         document.querySelectorAll('audio').forEach(el => audioElements[el.id] = el);
 
-        function playMidiSynthLoop() {
+        function playNaturalMidiLoop() {
+            const midiAudio = audioElements['midi-audio'];
+            if (midiAudio) {
+                midiAudio.currentTime = 0;
+                midiAudio.loop = true;
+                midiAudio.play().catch(() => playSyntheticFallbackMidi());
+            } else {
+                playSyntheticFallbackMidi();
+            }
+        }
+
+        function playSyntheticFallbackMidi() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
-            const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 523.25, 659.25, 523.25];
+            const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
             let noteIdx = 0;
 
             function scheduleNextNote() {
@@ -282,10 +302,10 @@
                 osc.frequency.setValueAtTime(notes[noteIdx], audioCtx.currentTime);
 
                 filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                filter.frequency.setValueAtTime(1400, audioCtx.currentTime);
 
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
 
                 osc.connect(filter);
                 filter.connect(gain);
@@ -293,19 +313,24 @@
                 if (audioDest) gain.connect(audioDest);
 
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.35);
+                osc.stop(audioCtx.currentTime + 0.3);
 
                 noteIdx = (noteIdx + 1) % notes.length;
-                midiMuteTimer = setTimeout(scheduleNextNote, 200);
+                midiTimer = setTimeout(scheduleNextNote, 220);
             }
 
             scheduleNextNote();
         }
 
-        function stopMidiSynthLoop() {
-            if (midiMuteTimer) {
-                clearTimeout(midiMuteTimer);
-                midiMuteTimer = null;
+        function stopNaturalMidiLoop() {
+            const midiAudio = audioElements['midi-audio'];
+            if (midiAudio) {
+                midiAudio.pause();
+                midiAudio.currentTime = 0;
+            }
+            if (midiTimer) {
+                clearTimeout(midiTimer);
+                midiTimer = null;
             }
         }
 
@@ -410,7 +435,7 @@
 
         function stopAllBgm() {
             ['bgm-title', 'bgm-stage', 'bgm-underground', 'bgm-water', 'bgm-snow', 'bgm-boss', 'bgm-invincible', 'bgm-shop', 'ending-audio', 'downtime-audio', 'story-audio'].forEach(stopAudio);
-            stopMidiSynthLoop();
+            stopNaturalMidiLoop();
         }
 
         function setAudioSpeedAndPitch(id, rate) {
@@ -462,7 +487,7 @@
                 playAudio(target, true);
             }
             if (player.timeStopped || player.permanentTimeStop) {
-                playMidiSynthLoop();
+                playNaturalMidiLoop();
             }
             updateBgmSpeed();
         }
@@ -786,7 +811,7 @@
             projectiles.push({
                 x: player.x + (player.facing > 0 ? player.w : -10),
                 y: player.y + player.h / 2 - 4,
-                w: 16, h: 8, vx: player.facing * 10
+                w: 16, h: 8, vx: player.facing * player.bulletSpeed
             });
         }
 
@@ -910,11 +935,11 @@
         function triggerTimeStopEffect() {
             gameState.score += 300; updateUiBar();
             player.timeStopped = true;
-            playMidiSynthLoop();
+            playNaturalMidiLoop();
             if (player.timeStopTimer) clearTimeout(player.timeStopTimer);
             player.timeStopTimer = setTimeout(() => {
                 player.timeStopped = false;
-                stopMidiSynthLoop();
+                stopNaturalMidiLoop();
                 updateUiBar();
             }, 10000);
         }
@@ -1210,6 +1235,7 @@
             let price = 0;
             if (itemId === 'perm_time_stop') price = 150;
             else if (itemId === 'perm_invincible') price = 100;
+            else if (itemId === 'super_gun') price = 75;
             else if (itemId === 'perm_self_destruct_immune') price = 50;
             else if (itemId === 'score_50') price = 5;
 
@@ -1220,8 +1246,9 @@
             }
 
             gameState.riceCount -= price;
-            if (itemId === 'perm_time_stop') { player.permanentTimeStop = true; player.timeStopped = true; playMidiSynthLoop(); }
+            if (itemId === 'perm_time_stop') { player.permanentTimeStop = true; player.timeStopped = true; playNaturalMidiLoop(); }
             else if (itemId === 'perm_invincible') { player.permanentInvincible = true; player.invincible = true; }
+            else if (itemId === 'super_gun') { player.bulletSpeed = 20; }
             else if (itemId === 'perm_self_destruct_immune') { player.hasShield = true; }
             else if (itemId === 'score_50') gameState.score += 50;
 
