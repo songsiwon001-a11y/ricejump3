@@ -43,6 +43,7 @@
     <audio id="gun-audio" src="gun_shoot!.mp3"></audio>
     <audio id="jump-audio" src="jump.wav"></audio>
     <audio id="die-audio" src="die.wav"></audio>
+    <audio id="insufficient-funds-audio" src="잔액이_부족합니다.mp3"></audio>
     <audio id="gameover-audio" src="GAME_OVER.mp3"></audio>
     <audio id="pause-audio" src="pause.mp3"></audio>
     <audio id="back-audio" src="back.mp3" loop></audio>
@@ -132,6 +133,14 @@
             </div>
 
             <div id="shop-item-list" class="flex flex-col gap-2 w-full max-w-md mb-4 max-h-[260px] overflow-y-auto px-2">
+                <div data-item-id="perm_time_stop" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
+                    <div class="text-left">
+                        <div class="text-[10px] text-cyan-400 font-bold">⏳ 영원 시간 멈춤 쌀</div>
+                        <div class="text-[8px] text-gray-300">웹사이트 접속 동안 타이머 무한 정지</div>
+                    </div>
+                    <div class="text-xs font-bold text-yellow-300 bg-yellow-950 px-2 py-1 rounded border border-yellow-600">🍚 150개</div>
+                </div>
+
                 <div data-item-id="perm_invincible" class="shop-item-card flex items-center justify-between bg-gray-800 p-3 rounded border-2 border-gray-600 cursor-pointer transition-all hover:border-yellow-400">
                     <div class="text-left">
                         <div class="text-[10px] text-amber-400 font-bold">✨ 영원 무적 밥솥</div>
@@ -235,14 +244,14 @@
             x: 100, y: 350, w: 42, h: 56, vx: 0, vy: 0, speed: 5, normalSpeed: 5, jumpForce: -12,
             grounded: false, facing: 1, waterGunActive: true, invincible: false, invincibleTimer: null,
             permanentInvincible: false, superSpeed: false, superSpeedTimer: null, hasShield: false,
-            sledActive: false, sledTimer: null
+            sledActive: false, sledTimer: null, timeStopped: false, timeStopTimer: null, permanentTimeStop: false
         };
 
         let keys = { left: false, right: false, jump: false };
-        let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], cameraItems = [], sledItems = [], riceParticles = [];
+        let platforms = [], mysteryBlocks = [], enemies = [], projectiles = [], riceGrains = [], riceCookerItems = [], flipperItems = [], cameraItems = [], sledItems = [], timeStopItems = [], riceParticles = [];
         let boss = null, goalSwitch = { x: 0, y: 0, w: 40, h: 48, pressed: false }, snowMan = { x: 0, y: 0, w: 48, h: 64, found: false };
         let cameraX = 0, lastTimerTick = Date.now(), isDowntimeMode = false, isTenMinLockMode = false, lastNotifiedMinute = -1;
-        let shopItemsList = ['perm_invincible', 'perm_self_destruct_immune', 'score_50'];
+        let shopItemsList = ['perm_time_stop', 'perm_invincible', 'perm_self_destruct_immune', 'score_50'];
         let selectedShopIndex = 0, activeConfirmItem = null;
 
         let mediaRecorder = null;
@@ -250,9 +259,55 @@
         let audioCtx = null;
         let audioDest = null;
         let audioSources = {};
+        let midiMuteTimer = null;
 
         const audioElements = {};
         document.querySelectorAll('audio').forEach(el => audioElements[el.id] = el);
+
+        function playMidiSynthLoop() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 523.25, 659.25, 523.25];
+            let noteIdx = 0;
+
+            function scheduleNextNote() {
+                if (!player.timeStopped && !player.permanentTimeStop) return;
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(notes[noteIdx], audioCtx.currentTime);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                if (audioDest) gain.connect(audioDest);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+
+                noteIdx = (noteIdx + 1) % notes.length;
+                midiMuteTimer = setTimeout(scheduleNextNote, 200);
+            }
+
+            scheduleNextNote();
+        }
+
+        function stopMidiSynthLoop() {
+            if (midiMuteTimer) {
+                clearTimeout(midiMuteTimer);
+                midiMuteTimer = null;
+            }
+        }
 
         function setupAudioRecording() {
             if (!audioCtx) {
@@ -355,6 +410,7 @@
 
         function stopAllBgm() {
             ['bgm-title', 'bgm-stage', 'bgm-underground', 'bgm-water', 'bgm-snow', 'bgm-boss', 'bgm-invincible', 'bgm-shop', 'ending-audio', 'downtime-audio', 'story-audio'].forEach(stopAudio);
+            stopMidiSynthLoop();
         }
 
         function setAudioSpeedAndPitch(id, rate) {
@@ -388,7 +444,7 @@
             document.getElementById('ui-score').innerText = gameState.score;
             document.getElementById('ui-rice').innerText = gameState.riceCount;
             document.getElementById('ui-lives').innerText = gameState.lives;
-            document.getElementById('ui-timer').innerText = gameState.timer;
+            document.getElementById('ui-timer').innerText = (player.permanentTimeStop || player.timeStopped) ? "STOP" : gameState.timer;
         }
 
         function playCurrentBgm() {
@@ -404,6 +460,9 @@
                 else if (gameState.stage >= 19 && gameState.stage <= 30) target = 'bgm-snow';
 
                 playAudio(target, true);
+            }
+            if (player.timeStopped || player.permanentTimeStop) {
+                playMidiSynthLoop();
             }
             updateBgmSpeed();
         }
@@ -736,14 +795,16 @@
             gameState.timer = 100;
             player.x = 80; player.y = 300; player.vx = 0; player.vy = 0;
             cameraX = 0;
-            projectiles = []; riceGrains = []; riceCookerItems = []; flipperItems = []; cameraItems = []; sledItems = []; riceParticles = [];
+            projectiles = []; riceGrains = []; riceCookerItems = []; flipperItems = []; cameraItems = []; sledItems = []; timeStopItems = []; riceParticles = [];
             boss = null; keys.left = false; keys.right = false; stopAudio('back-audio');
 
             player.speed = player.normalSpeed || 5;
             player.superSpeed = false;
             player.sledActive = false;
+            player.timeStopped = false;
             if (player.superSpeedTimer) clearTimeout(player.superSpeedTimer);
             if (player.sledTimer) clearTimeout(player.sledTimer);
+            if (player.timeStopTimer) clearTimeout(player.timeStopTimer);
             if (player.permanentInvincible) player.invincible = true;
             updateBgmSpeed();
 
@@ -763,12 +824,14 @@
                 }
 
                 let itemRnd = Math.random();
-                if (itemRnd < 0.35 && currentX > 200) {
+                if (itemRnd < 0.3 && currentX > 200) {
                     riceGrains.push({ x: currentX + 70, y: groundY - 100, w: 24, h: 24, collected: false });
-                } else if (itemRnd < 0.6 && currentX > 200) {
+                } else if (itemRnd < 0.5 && currentX > 200) {
                     riceCookerItems.push({ x: currentX + 110, y: groundY - 120, w: 40, h: 40, collected: false });
-                } else if (itemRnd < 0.8 && currentX > 200) {
+                } else if (itemRnd < 0.7 && currentX > 200) {
                     cameraItems.push({ x: currentX + 150, y: groundY - 100, w: 32, h: 32, collected: false });
+                } else if (itemRnd < 0.85 && currentX > 200) {
+                    timeStopItems.push({ x: currentX + 130, y: groundY - 110, w: 30, h: 30, collected: false });
                 }
 
                 if (stageNum >= 14 && stageNum <= 18 && Math.random() < 0.5 && currentX > 200) {
@@ -781,7 +844,7 @@
                 currentX += platWidth + gapWidth;
             }
 
-            const itemTypes = ['grain', 'cooker', 'camera'];
+            const itemTypes = ['grain', 'cooker', 'camera', 'timestop'];
             for (let i = 0; i < 6; i++) {
                 let type = itemTypes[i % itemTypes.length];
                 mysteryBlocks.push({ x: 450 + i * 450, y: 320 - (i % 2) * 50, w: 40, h: 40, hit: false, item: type });
@@ -844,6 +907,18 @@
             }, 10000);
         }
 
+        function triggerTimeStopEffect() {
+            gameState.score += 300; updateUiBar();
+            player.timeStopped = true;
+            playMidiSynthLoop();
+            if (player.timeStopTimer) clearTimeout(player.timeStopTimer);
+            player.timeStopTimer = setTimeout(() => {
+                player.timeStopped = false;
+                stopMidiSynthLoop();
+                updateUiBar();
+            }, 10000);
+        }
+
         function activateInvincibleMode() {
             player.invincible = true;
             playAudio('rice-audio', false); playCurrentBgm();
@@ -858,11 +933,13 @@
         function update() {
             if (!gameState.isActive || gameState.isPaused) return;
 
-            if (Date.now() - lastTimerTick >= 1000) {
-                gameState.timer--;
-                lastTimerTick = Date.now();
-                if (gameState.timer <= 0) playerDie();
-                updateBgmSpeed();
+            if (!player.timeStopped && !player.permanentTimeStop) {
+                if (Date.now() - lastTimerTick >= 1000) {
+                    gameState.timer--;
+                    lastTimerTick = Date.now();
+                    if (gameState.timer <= 0) playerDie();
+                    updateBgmSpeed();
+                }
             }
 
             if (keys.left) { player.vx = -player.speed; player.facing = -1; }
@@ -886,6 +963,7 @@
                         if (mb.item === 'grain') triggerRiceGrainEffect(mb.x + mb.w / 2, mb.y);
                         else if (mb.item === 'cooker') triggerRiceCookerEffect();
                         else if (mb.item === 'camera') triggerCameraItemEffect();
+                        else if (mb.item === 'timestop') triggerTimeStopEffect();
                     }
                 }
             });
@@ -917,6 +995,12 @@
             sledItems.forEach(sl => {
                 if (!sl.collected && player.x + player.w > sl.x && player.x < sl.x + sl.w && player.y + player.h > sl.y && player.y < sl.y + sl.h) {
                     sl.collected = true; triggerSledEffect();
+                }
+            });
+
+            timeStopItems.forEach(ts => {
+                if (!ts.collected && player.x + player.w > ts.x && player.x < ts.x + ts.w && player.y + player.h > ts.y && player.y < ts.y + ts.h) {
+                    ts.collected = true; triggerTimeStopEffect();
                 }
             });
 
@@ -1124,18 +1208,20 @@
             if (!activeConfirmItem) return;
             const itemId = activeConfirmItem;
             let price = 0;
-            if (itemId === 'perm_invincible') price = 100;
+            if (itemId === 'perm_time_stop') price = 150;
+            else if (itemId === 'perm_invincible') price = 100;
             else if (itemId === 'perm_self_destruct_immune') price = 50;
             else if (itemId === 'score_50') price = 5;
 
             if (gameState.riceCount < price) {
-                playAudio('die-audio', false); showNoticePopup("쌀이 부족합니다!");
+                playAudio('insufficient-funds-audio', false); showNoticePopup("쌀이 부족합니다!");
                 document.getElementById('shop-confirm-modal').classList.add('hidden');
                 return;
             }
 
             gameState.riceCount -= price;
-            if (itemId === 'perm_invincible') { player.permanentInvincible = true; player.invincible = true; }
+            if (itemId === 'perm_time_stop') { player.permanentTimeStop = true; player.timeStopped = true; playMidiSynthLoop(); }
+            else if (itemId === 'perm_invincible') { player.permanentInvincible = true; player.invincible = true; }
             else if (itemId === 'perm_self_destruct_immune') { player.hasShield = true; }
             else if (itemId === 'score_50') gameState.score += 50;
 
@@ -1249,6 +1335,13 @@
                     ctx.fillStyle = "#e67e22"; ctx.fillRect(sl.x, sl.y + 16, sl.w, 8);
                     ctx.fillStyle = "#d35400"; ctx.fillRect(sl.x + 4, sl.y, sl.w - 8, 16);
                     ctx.fillStyle = "#ffffff"; ctx.font = "16px monospace"; ctx.fillText("🛷", sl.x + 4, sl.y + 22);
+                }
+            });
+
+            timeStopItems.forEach(ts => {
+                if (!ts.collected) {
+                    ctx.fillStyle = "#0984e3"; ctx.fillRect(ts.x, ts.y, ts.w, ts.h);
+                    ctx.fillStyle = "#ffffff"; ctx.font = "14px monospace"; ctx.fillText("⏳", ts.x + 4, ts.y + 20);
                 }
             });
 
